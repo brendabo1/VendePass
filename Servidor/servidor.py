@@ -15,8 +15,8 @@ class Rota:
             self.assentos.remove(assento)
         if len(self.assentos) == 0:
             self.disponivel = False
-            return True
-        return False
+            return False
+        return True
     
     def to_dict(self):
         return {
