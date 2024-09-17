@@ -42,6 +42,46 @@ rotas = {'SSA': ['FEC', 'LEC', 'PAV', 'GNM', 'VDC', 'IOS'],
          'BPS': ['IOS', 'TXF'],  
          'TXF': ['VDC', 'BPS']}
 
+rotas2 = {
+    "SSA": {
+        "FEC": [
+            {"voo": "Voo AB123", "assentos": [1, 2, 3, 4, 5], "duracao": "1h30m", "disponivel": True},
+            {"voo": "Voo AB456", "assentos": [1, 2, 3], "duracao": "1h20m", "disponivel": True}
+        ],
+        "LEC": [
+            {"voo": "Voo AC789", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ],
+        "PAV": [
+            {"voo": "Voo AC490", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ],
+        "GNM": [
+            {"voo": "Voo AB7377", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ],
+        "VDC": [
+            {"voo": "Voo AC364", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ],
+        "IOS": [
+            {"voo": "Voo AB912", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ]
+    },
+    "FEC": {
+        "SSA": [
+            {"voo": "Voo BA321", "assentos": [1, 2, 3, 4, 5], "duracao": "1h30m", "disponivel": True}
+        ],
+        "LEC": [
+            {"voo": "Voo BC654", "assentos": [1, 2, 3], "duracao": "50m", "disponivel": True}
+        ]
+    },
+    "LEC": {
+        "SSA": [
+            {"voo": "Voo CA987", "assentos": [1, 2, 3, 4], "duracao": "2h", "disponivel": True}
+        ],
+        "FEC": [
+            {"voo": "Voo CB654", "assentos": [1, 2, 3], "duracao": "50m", "disponivel": True}
+        ]
+    }
+}
+
 for caminho in gerar_caminhos(rotas, ['FEC'], 'PAV'):
     print(caminho)
 
