@@ -3,12 +3,28 @@ import json
 
 class Cliente:
     def __init__(self, host='127.0.0.1', port=12345):
-        self.host = host
-        self.port = port
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_ip = host
+        self.__port = port
+        self.__client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     def conectar(self):
-        self.client_socket.connect((self.host, self.port))
+        endpoint = (self.__server_ip, self.__port)
+        try:
+            self.__client_socket.connect(endpoint)
+            print("Conexao realizada com sucesso")
+            self.__method()
+        except Exception as e:
+            print("Erro na conexão com o servidor ", e.args)
+    
+    def login(self):
+        invalido = True
+        while invalido: 
+            print("---------------------LOGIN---------------------\n\n")
+            print("\033[31m" +"Para Sair insira 'x'" +"\033[0m") 
+            user_id = input("ID: ")
+            if user_id == 'x' or user_id == 'X':
+                break
+            password = input("Senha: ")
     
     def solicitar_rotas(self):
         requisicao = {"tipo": "listar_rotas"}
@@ -39,6 +55,8 @@ class Cliente:
 if __name__ == "__main__":
     cliente = Cliente()
     cliente.conectar()
+
+    
 
     # Solicitar rotas disponíveis
     rotas = cliente.solicitar_rotas()

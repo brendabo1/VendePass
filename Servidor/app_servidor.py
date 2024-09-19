@@ -37,27 +37,24 @@ class Servidor():
         self._host = host
         self._port = port
         self._tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.rotas = self.inicializar_rotas()
+        self.__threadPool = {}
     
-    def inicializar_rotas(self):
-        return [
-            Rota("Cidade A", "Cidade B", True, 100, ["1A", "1B", "2A", "2B"]),
-            Rota("Cidade A", "Cidade C", True, 150, ["1A", "1B", "2A", "2B"]),
-            Rota("Cidade B", "Cidade C", False, 200, ["1A", "1B", "2A", "2B"])
-        ]
 
-    def iniciar(self):
+    def start(self):
         """Inicia a execução do serviço"""
 
         endpoint = (self._host, self._port)
         try:
             self._tcp.bind(endpoint)
-            self._tcp.listen(5)
+            self._tcp.listen()
             print("O servidor foi iniciado em ", self._host, self._port)
             while True:
                 connection, client = self._tcp.accept()  #aguarda a conexao do cliente
                 # thread handle client
-                self.handle_client(connection, client)
+                self.__threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
+                self.__threadPool[client].start()
+
+                #self.handle_client(connection, client)
         except Exception as e:
             print("Erro: ", e.args)
 
@@ -75,8 +72,12 @@ class Servidor():
                     self.enviar_rotas(conn)
                 elif requisicao["tipo"] == "comprar_passagem":
                     self.processar_compra(conn, requisicao)
+            except OSError as e:
+                print("erro na conexão ", addr, e.args)
+                return
             except Exception as e:
-                print(f"Erro na conexão: {e}")
+                print(f"Erro nos dados recebidos do cliente: {addr}, {e.args}")
+                conn.send(bytes("erro"))
                 break
         conn.close()
         print(f"Conexão encerrada com {addr}")
@@ -127,4 +128,4 @@ if __name__ == "__main__":
     host = '127.0.0.1'  # Localhost
     port = 12345        # Porta de conexão
     servidor = Servidor(host, port)
-    servidor.iniciar()
+    servidor.start()

@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  servidor:
+    build: ./servidor
+    container_name: servidor-socket
+    ports:
+      - "12345:10000"  # Mapeia a porta do host para o container
+    networks:
+      - rede_socket
+
+  cliente:
+    build: ./cliente
+    container_name: cliente-socket
+    depends_on:
+      - servidor  # Garante que o cliente só suba após o servidor estar pronto
+    networks:
+      - rede_socket
+
+networks:
+  rede_socket:
+    driver: bridge
