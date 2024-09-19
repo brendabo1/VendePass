@@ -56,7 +56,6 @@ if __name__ == "__main__":
     cliente = Cliente()
     cliente.conectar()
 
-    
 
     # Solicitar rotas disponíveis
     rotas = cliente.solicitar_rotas()

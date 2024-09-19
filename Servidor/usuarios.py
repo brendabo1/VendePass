@@ -77,7 +77,11 @@ def adicionar_pedido(id, pedido, arquivo):
     salvar_usuarios(usuarios, arquivo)
     print(f"Pedido adicionado ao usuário {id}.")
 
-arquivo_usuarios = "usuarios.json"
+def inicializa_usuarios(arquivo_usuarios="usuarios.json"):
+    # Adicionando novos usuários
+    cria_novo_usuario("João", "senha123", arquivo_usuarios)
+    cria_novo_usuario("Maria", "senha456", arquivo_usuarios)
+    cria_novo_usuario("Jonas", "senha456", arquivo_usuarios)
 
 # novo_pedido = {
 #     "numero": 103,
@@ -88,12 +92,8 @@ arquivo_usuarios = "usuarios.json"
 
 # Adicionando um pedido para o usuário 'USR001'
 #adicionar_pedido('USR002', novo_pedido, arquivo_usuarios)
-# Adicionando novos usuários
-# cria_novo_usuario("João", "senha123", arquivo_usuarios)
-# cria_novo_usuario("Maria", "senha456", arquivo_usuarios)
-#cria_novo_usuario("Carlos", "senha789", [{"numero": 103, "voo": "CD789", "assento": 20, "data": "2023-11-10"}])
 
-usuarios_carregados = carregar_usuarios(arquivo_usuarios)
+usuarios_carregados = carregar_usuarios(arquivo_usuarios="usuarios.json")
 print("\nUsuários carregados:")
 for u in usuarios_carregados:
     print(u)

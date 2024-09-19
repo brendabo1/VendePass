@@ -1,6 +1,29 @@
 # encoding: utf-8
 
-def gerar_caminhos(grafo, caminho, final):
+def listar_caminhos_disponiveis(rotas):
+    caminhos_disponiveis = []
+
+    # Percorre todas as origens no grafo
+    for origem, destinos in rotas.items():
+        # Para cada destino a partir da origem
+        for destino, voos in destinos.items():
+            # Para cada voo que vai da origem ao destino
+            for voo in voos:
+                # Verifica se o voo está disponível
+                if voo['disponivel']:
+                    caminho = (f"Origem: {origem}, Destino: {destino}, "
+                               f"Voo: {voo['voo']}, Assentos: {voo['assentos']}, "
+                               f"Duração: {voo['duracao']}")
+                    caminhos_disponiveis.append(caminho)
+    
+    # Exibe os caminhos disponíveis
+    if caminhos_disponiveis:
+        for caminho in caminhos_disponiveis:
+            print(caminho)
+    else:
+        print("Nenhum caminho disponível.")
+
+def gerar_caminhos(caminho, final):
     """Enumera todos os caminhos no grafo `grafo` iniciados por `caminho` e que terminam no vértice `final`."""
 
     # Se o caminho de fato atingiu o vértice final, não há o que fazer.
@@ -15,8 +38,35 @@ def gerar_caminhos(grafo, caminho, final):
             continue
         # Se você estiver usando python3, você pode substituir o for
         # pela linha "yield from gerar_caminhos(grafo, caminho + [vizinho], final)"
-        for caminho_maior in gerar_caminhos(grafo, caminho + [vizinho], final):
+        for caminho_maior in gerar_caminhos(rotas, caminho + [vizinho], final):
             yield caminho_maior
+
+# Função para reservar um assento em um voo específico
+def reservar_assento(rotas, origem, destino, voo_numero, assento):
+    # Verifica se a origem existe no grafo de rotas
+    if origem not in rotas:
+        return f"Origem {origem} não encontrada."
+
+    # Verifica se o destino existe a partir da origem
+    if destino not in rotas[origem]:
+        return f"Destino {destino} não encontrado a partir de {origem}."
+
+    # Itera sobre os voos do destino para encontrar o voo específico
+    for voo in rotas[origem][destino]:
+        if voo['voo'] == voo_numero:
+            # Verifica se o voo está disponível
+            if not voo['disponivel']:
+                return f"O voo {voo_numero} não está disponível."
+
+            # Verifica se o assento está disponível
+            if assento in voo['assentos']:
+                # Remove o assento da lista de assentos disponíveis
+                voo['assentos'].remove(assento)
+                return f"Assento {assento} reservado com sucesso no voo {voo_numero}."
+            else:
+                return f"Assento {assento} não está disponível no voo {voo_numero}."
+    
+    return f"Voo {voo_numero} não encontrado de {origem} para {destino}."
 
 """
 (SSA) Salvador - Aeroporto Deputado Luís Eduardo Magalhães 
@@ -82,7 +132,11 @@ rotas2 = {
     }
 }
 
-for caminho in gerar_caminhos(rotas, ['FEC'], 'PAV'):
-    print(caminho)
+# for caminho in gerar_caminhos(['FEC'], 'PAV'):
+#     print(caminho)
+
+
+
+listar_caminhos_disponiveis(rotas2)
 
     

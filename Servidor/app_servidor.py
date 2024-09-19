@@ -1,6 +1,7 @@
 import socket
 import threading
 import json
+from rotas import gerar_caminhos, listar_caminhos_disponiveis
 
 class Rota:
     def __init__(self, origem, destino, disponivel, preco, assentos):
@@ -33,12 +34,12 @@ class Servidor():
         """
         Construtor da classe servidor
         """
-
         self._host = host
         self._port = port
         self._tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__threadPool = {}
-    
+        self._threadPool = {}
+        self._lock = threading.Lock()
+
 
     def start(self):
         """Inicia a execução do serviço"""
@@ -64,9 +65,13 @@ class Servidor():
         while True:
             try:
                 data = conn.recv(1024).decode()
+                print(data)
                 if not data:
                     break
                 requisicao = json.loads(data)
+                print(requisicao)
+                conn.close()
+                print(f"Conexão encerrada com {addr}")
 
                 if requisicao["tipo"] == "listar_rotas":
                     self.enviar_rotas(conn)
@@ -82,10 +87,14 @@ class Servidor():
         conn.close()
         print(f"Conexão encerrada com {addr}")
 
+    def reservar_assento(self, assento):
+        # self._lock.acquire()
+        # self._lock.release()
+        pass
+
     def encontrar_rota(self, origem, destino):
-        for rota in self.rotas:
-            if rota.origem == origem and rota.destino == destino:
-                return rota
+        for rota in gerar_caminhos(origem, destino):
+            return rota
         return None
     
     def enviar_rotas(self, conn):
