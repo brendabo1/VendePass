@@ -1,7 +1,9 @@
 import socket
 import threading
 import json
-from rotas import gerar_caminhos, listar_caminhos_disponiveis
+#from modulos.rotas import gerar_caminhos, listar_caminhos_disponiveis
+from modulos.msg_utils import enviar_mensagem, receber_mensagem
+from modulos.usuarios import autenticar_usuario
 
 class Rota:
     def __init__(self, origem, destino, disponivel, preco, assentos):
@@ -52,8 +54,9 @@ class Servidor():
             while True:
                 connection, client = self._tcp.accept()  #aguarda a conexao do cliente
                 # thread handle client
-                self.__threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
-                self.__threadPool[client].start()
+                self._threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
+                self._threadPool[client].start()
+                print(f"Atendendo {client} em uma nova thread.")
 
                 #self.handle_client(connection, client)
         except Exception as e:
@@ -62,30 +65,77 @@ class Servidor():
         
     def handle_client(self, conn, addr):
         print("Nova conexao: ", addr)
+        autenticado = False
         while True:
-            try:
-                data = conn.recv(1024).decode()
-                print(data)
-                if not data:
-                    break
-                requisicao = json.loads(data)
-                print(requisicao)
-                conn.close()
-                print(f"Conexão encerrada com {addr}")
-
-                if requisicao["tipo"] == "listar_rotas":
-                    self.enviar_rotas(conn)
-                elif requisicao["tipo"] == "comprar_passagem":
-                    self.processar_compra(conn, requisicao)
-            except OSError as e:
-                print("erro na conexão ", addr, e.args)
-                return
-            except Exception as e:
-                print(f"Erro nos dados recebidos do cliente: {addr}, {e.args}")
-                conn.send(bytes("erro"))
+            tipo, dados = receber_mensagem(conn)
+            if not tipo:
+                print(f"Conexão com {addr} encerrada.")
                 break
+
+            if tipo == 'LOGIN':
+                username = dados.get('username')
+                password = dados.get('password')
+                sucesso = autenticar_usuario(username, password)
+                enviar_mensagem(conn, 'LOGIN_RESP', {'sucesso': sucesso})
+                if sucesso:
+                    autenticado = True
+
+            elif tipo == 'LIST_ROUTES':
+                if not autenticado:
+                    enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
+                    continue
+                origem = dados.get('origem')
+                destino = dados.get('destino')
+                rotas = buscar_rotas(origem, destino)
+                enviar_mensagem(conn, 'LIST_ROUTES_RESP', {'rotas': rotas})
+
+            elif tipo == 'RESERVE_SEAT':
+                if not autenticado:
+                    enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
+                    continue
+                origem = dados.get('origem')
+                destino = dados.get('destino')
+                cod_voo = dados.get('cod_voo')
+                cod_assento = dados.get('cod_assento')
+                resultado = reservar_assento(origem, destino, cod_voo, cod_assento)
+                enviar_mensagem(conn, 'RESERVE_SEAT_RESP', resultado)
+
+            elif tipo == 'LOGOUT':
+                print(f"Usuário {addr} solicitou logout.")
+                enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
+                break
+
+            else:
+                print(f"Tipo de mensagem desconhecido: {tipo}")
+                enviar_mensagem(conn, 'ERROR', {'mensagem': 'Tipo de mensagem desconhecido.'})
+
         conn.close()
-        print(f"Conexão encerrada com {addr}")
+        print(f"Conexão com {addr} encerrada.")
+        # while True:
+        #     try:
+        #         data = receber_mensagem
+        #         data = conn.recv(1024).decode()
+        #         print(data)
+        #         if not data:
+        #             break
+        #         requisicao = json.loads(data)
+        #         print(requisicao)
+        #         conn.close()
+        #         print(f"Conexão encerrada com {addr}")
+
+        #         if requisicao["tipo"] == "listar_rotas":
+        #             self.enviar_rotas(conn)
+        #         elif requisicao["tipo"] == "comprar_passagem":
+        #             self.processar_compra(conn, requisicao)
+        #     except OSError as e:
+        #         print("erro na conexão ", addr, e.args)
+        #         return
+        #     except Exception as e:
+        #         print(f"Erro nos dados recebidos do cliente: {addr}, {e.args}")
+        #         conn.send(bytes("erro"))
+        #         break
+        # conn.close()
+        # print(f"Conexão encerrada com {addr}")
 
     def reservar_assento(self, assento):
         # self._lock.acquire()

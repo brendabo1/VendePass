@@ -1,23 +1,14 @@
 import json
 import re
 
-# class Usuario:
-#     def __init__(self,id, nome, senha, pedidos=None):
-#         self.id =id
-#         self.nome = nome
-#         self.senha = senha
-#         self.pedidos = pedidos if pedidos is not None else []
 
-    # def __str__(self):
-    #     return f"ID: {self.id}, Nome: {self.nome}, Pedidos: {self.pedidos}"
-
-def salvar_usuarios(dados, nome_arquivo):
+def salvar_usuarios(dados, nome_arquivo="data/usuarios.json"):
     with open(nome_arquivo, 'w+') as arquivo:
         json_obj=json.dumps(dados)
         arquivo.write(json_obj)  # Salvando como JSON
 
 # Função para carregar os usuários de um arquivo JSON
-def carregar_usuarios(arquivo):
+def carregar_usuarios(arquivo="data/usuarios.json"):
     try:
         with open(arquivo, 'r') as arquivo:
             return json.load(arquivo)
@@ -25,6 +16,13 @@ def carregar_usuarios(arquivo):
         # Se o arquivo não existir, estiver vazio ou mal formatado, retorna uma lista vazia
         print(f"Arquivo {arquivo} não encontrado. Criando um novo arquivo.")
         return []
+
+def autenticar_usuario(iduser, senha, nome_arquivo):
+    usuarios = carregar_usuarios(nome_arquivo)
+    for usuario in usuarios:
+        if usuario['iduser'] == iduser and usuario['senha'] == senha:
+            return usuario  # Autenticação bem-sucedida
+    return None  # Autenticação falhou
 
 # Função para gerar o próximo ID de usuário no formato USR000
 def gerar_proximo_id(usuarios):
@@ -77,11 +75,11 @@ def adicionar_pedido(id, pedido, arquivo):
     salvar_usuarios(usuarios, arquivo)
     print(f"Pedido adicionado ao usuário {id}.")
 
-def inicializa_usuarios(arquivo_usuarios="usuarios.json"):
+def inicializa_usuarios(arquivo_usuarios="data/usuarios.json"):
     # Adicionando novos usuários
     cria_novo_usuario("João", "senha123", arquivo_usuarios)
     cria_novo_usuario("Maria", "senha456", arquivo_usuarios)
-    cria_novo_usuario("Jonas", "senha456", arquivo_usuarios)
+    cria_novo_usuario("Felipe", "senha456", arquivo_usuarios)
 
 # novo_pedido = {
 #     "numero": 103,
@@ -92,8 +90,8 @@ def inicializa_usuarios(arquivo_usuarios="usuarios.json"):
 
 # Adicionando um pedido para o usuário 'USR001'
 #adicionar_pedido('USR002', novo_pedido, arquivo_usuarios)
-
-usuarios_carregados = carregar_usuarios(arquivo_usuarios="usuarios.json")
+inicializa_usuarios()
+usuarios_carregados = carregar_usuarios()
 print("\nUsuários carregados:")
 for u in usuarios_carregados:
     print(u)
