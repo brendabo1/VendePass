@@ -26,7 +26,7 @@ class Cliente:
     
 
     def fechar_conexao(self):
-        self.client_socket.close()
+        self.__client_socket.close()
 
 if __name__ == "__main__":
     cliente = Cliente()

@@ -48,3 +48,41 @@ def validar_codigo_aeroporto(codigo):
     - bool: True se válido, False caso contrário.
     """
     return len(codigo) == 3 and codigo.isalpha() and codigo.isupper()
+
+def menu():
+    menu = True
+
+    while menu:
+        print("===== MENU =====")
+        print("1- Comprar passagem")
+        print("2- Sair")
+
+        menuOption = input("Digite a opção do menu: ")
+    
+            
+        if menuOption == '1':
+            rotas = cliente.solicitar_rotas()
+            print("Rotas disponíveis:")
+            for rota in rotas:
+                status = "Disponível" if rota["disponivel"] else "Indisponível"
+                print(f'{rota["origem"]} -> {rota["destino"]}: {status} - Preço: {rota["preco"]}')
+
+            # Solicitar compra de passagem
+            origem = input("Escolha a origem: ")
+            destino = input("Escolha o destino: ")
+            assento = input("Escolha o assento: ")
+
+            resposta_final = cliente.comprar_passagem(origem, destino, assento)
+            print(resposta_final["mensagem"])
+            if resposta_final["status"] == "sucesso":
+                print(f"Preço: {resposta_final['preco']}")
+
+        elif menuOption == "2":
+            print("SAINDO")
+            cliente.fechar_conexao()
+            menu = False
+        else:
+            print("DIGITE UM VALOR VÁLIDO")
+        
+    print("FIM DO PROGRAMA")
+
