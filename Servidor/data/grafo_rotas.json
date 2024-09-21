@@ -1,0 +1,277 @@
+{
+    "SSA": {
+        "FEC": [
+            {
+                "voo": "Voo AB123",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2C",
+                        "disponível": true
+                    }
+                ],
+                "duracao": "1h30m",
+                "disponivel": true
+            },
+            {
+                "voo": "Voo AB456",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "1h20m",
+                "disponivel": true
+            }
+        ],
+        "LEC": [
+            {
+                "voo": "Voo AC789",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ],
+        "PAV": [
+            {
+                "voo": "Voo AC490",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": false
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": true
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ],
+        "GNM": [
+            {
+                "voo": "Voo AB7377",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ],
+        "VDC": [
+            {
+                "voo": "Voo AC364",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ],
+        "IOS": [
+            {
+                "voo": "Voo AB912",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ]
+    },
+    "FEC": {
+        "SSA": [
+            {
+                "voo": "Voo BA321",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2C",
+                        "disponível": true
+                    }
+                ],
+                "duracao": "1h30m",
+                "disponivel": true
+            }
+        ],
+        "LEC": [
+            {
+                "voo": "Voo BC654",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "50m",
+                "disponivel": true
+            }
+        ]
+    },
+    "LEC": {
+        "SSA": [
+            {
+                "voo": "Voo CA987",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    },
+                    {
+                        "cod": "2B",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "2h",
+                "disponivel": true
+            }
+        ],
+        "FEC": [
+            {
+                "voo": "Voo CB654",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "1B",
+                        "disponivel": true
+                    },
+                    {
+                        "cod": "2A",
+                        "disponível": false
+                    }
+                ],
+                "duracao": "50m",
+                "disponivel": true
+            }
+        ]
+    }
+}

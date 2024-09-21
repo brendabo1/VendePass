@@ -4,31 +4,8 @@ import json
 #from modulos.rotas import gerar_caminhos, listar_caminhos_disponiveis
 from modulos.msg_utils import enviar_mensagem, receber_mensagem
 from modulos.usuarios import autenticar_usuario
+from modulos.utils import server_login
 
-class Rota:
-    def __init__(self, origem, destino, disponivel, preco, assentos):
-        self.origem = origem
-        self.destino = destino
-        self.disponivel = disponivel
-        self.preco = preco
-        self.assentos = assentos
-    
-    def reservar_assento(self, assento):
-        if assento in self.assentos:
-            self.assentos.remove(assento)
-        if len(self.assentos) == 0:
-            self.disponivel = False
-            return False
-        return True
-    
-    def to_dict(self):
-        return {
-            "origem": self.origem,
-            "destino": self.destino,
-            "disponivel": self.disponivel,
-            "preco": self.preco,
-            "assentos": self.assentos
-        }
 
 class Servidor():
     
@@ -43,74 +20,59 @@ class Servidor():
         self._lock = threading.Lock()
 
 
-    def start(self):
-        """Inicia a execução do serviço"""
-
-        endpoint = (self._host, self._port)
+    def handle_client(self, conn, addr):
+        print("Nova conexao funcao handle: ", addr)
+        on = True
         try:
-            self._tcp.bind(endpoint)
-            self._tcp.listen()
-            print("O servidor foi iniciado em ", self._host, self._port)
-            while True:
-                connection, client = self._tcp.accept()  #aguarda a conexao do cliente
-                # thread handle client
-                self._threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
-                self._threadPool[client].start()
-                print(f"Atendendo {client} em uma nova thread.")
+            while on:
+                tipo, dados = receber_mensagem(conn)
+                if not tipo:
+                    print(f"Conexão com {addr} encerrada condicional de tipo.")
+                    break
 
-                #self.handle_client(connection, client)
+                if tipo == 'LOGIN':
+                    autenticado = server_login (conn, dados)
+                    if autenticado:
+                        print("segue para o menu")
+                elif tipo == 'LOGOUT':
+                    print(f"Usuário {addr} solicitou logout.")
+                    enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
+                    on = False
+                    break
         except Exception as e:
-            print("Erro: ", e.args)
+            print(f"Erro na conexão com {addr}: {e}")
+        finally:
+        # conn.close()
+        # print(f"Conexão com {addr} encerrada.")
+            pass
+        
+
+            # elif tipo == 'LIST_ROUTES':
+            #     if not autenticado:
+            #         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
+            #         continue
+            #     origem = dados.get('origem')
+            #     destino = dados.get('destino')
+            #     rotas = buscar_rotas(origem, destino)
+            #     enviar_mensagem(conn, 'LIST_ROUTES_RESP', {'rotas': rotas})
+
+            # elif tipo == 'RESERVE_SEAT':
+            #     if not autenticado:
+            #         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
+            #         continue
+            #     origem = dados.get('origem')
+            #     destino = dados.get('destino')
+            #     cod_voo = dados.get('cod_voo')
+            #     cod_assento = dados.get('cod_assento')
+            #     resultado = reservar_assento(origem, destino, cod_voo, cod_assento)
+            #     enviar_mensagem(conn, 'RESERVE_SEAT_RESP', resultado)
+
+
+        # else:
+        #     print(f"Tipo de mensagem desconhecido: {tipo}")
+        #     enviar_mensagem(conn, 'ERROR', {'mensagem': 'Tipo de mensagem desconhecido.'})
 
         
-    def handle_client(self, conn, addr):
-        print("Nova conexao: ", addr)
-        autenticado = False
-        while True:
-            tipo, dados = receber_mensagem(conn)
-            if not tipo:
-                print(f"Conexão com {addr} encerrada.")
-                break
-
-            if tipo == 'LOGIN':
-                username = dados.get('username')
-                password = dados.get('password')
-                sucesso = autenticar_usuario(username, password)
-                enviar_mensagem(conn, 'LOGIN_RESP', {'sucesso': sucesso})
-                if sucesso:
-                    autenticado = True
-
-            elif tipo == 'LIST_ROUTES':
-                if not autenticado:
-                    enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
-                    continue
-                origem = dados.get('origem')
-                destino = dados.get('destino')
-                rotas = buscar_rotas(origem, destino)
-                enviar_mensagem(conn, 'LIST_ROUTES_RESP', {'rotas': rotas})
-
-            elif tipo == 'RESERVE_SEAT':
-                if not autenticado:
-                    enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
-                    continue
-                origem = dados.get('origem')
-                destino = dados.get('destino')
-                cod_voo = dados.get('cod_voo')
-                cod_assento = dados.get('cod_assento')
-                resultado = reservar_assento(origem, destino, cod_voo, cod_assento)
-                enviar_mensagem(conn, 'RESERVE_SEAT_RESP', resultado)
-
-            elif tipo == 'LOGOUT':
-                print(f"Usuário {addr} solicitou logout.")
-                enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
-                break
-
-            else:
-                print(f"Tipo de mensagem desconhecido: {tipo}")
-                enviar_mensagem(conn, 'ERROR', {'mensagem': 'Tipo de mensagem desconhecido.'})
-
-        conn.close()
-        print(f"Conexão com {addr} encerrada.")
         # while True:
         #     try:
         #         data = receber_mensagem
@@ -182,6 +144,31 @@ class Servidor():
             resposta = {"status": "falha", "mensagem": "Rota indisponível ou inexistente"}
             conn.sendall(json.dumps(resposta).encode())
 
+    def fechar_conexao_servidor(self):
+        self._tcp.close()
+    
+    def start(self):
+        """Inicia a execução do serviço"""
+
+        endpoint = (self._host, self._port)
+        try:
+            self._tcp.bind(endpoint)
+            self._tcp.listen()
+            print("O servidor foi iniciado em ", self._host, self._port)
+            while True:
+                connection, client = self._tcp.accept()  #aguarda a conexao do cliente
+                # thread handle client
+                self._threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
+                self._threadPool[client].start()
+                print(f"Atendendo {client} em uma nova thread.")
+
+                #self.handle_client(connection, client)
+        except Exception as e:
+            print("Erro: ", e.args)
+        finally:
+            connection.close()
+            # for client_thread in self._threadPool:
+            #     client_thread.join()
     
 if __name__ == "__main__":
     host = '127.0.0.1'  # Localhost

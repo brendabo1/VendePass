@@ -1,13 +1,30 @@
 import socket
 import json
 from utils import login, solicitar_rotas
+from msg_utils import enviar_mensagem, receber_mensagem
 
 class Cliente:
     def __init__(self, host='127.0.0.1', port=12345):
         self.__server_ip = host
         self.__port = port
         self.__client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+    def method(self):
+        try:
+            autenticado = login(self.__client_socket)
+            if not autenticado:
+                self.fechar_conexao()
+            else:
+                print("autenticado")
+                self.fechar_conexao()
+        except Exception as e:
+            print("Erro na conexão com o servidor ", e.args)
     
+
+    def fechar_conexao(self):
+        self.__client_socket.close()
+
     def conectar(self):
         endpoint = (self.__server_ip, self.__port)
         try:
@@ -17,16 +34,9 @@ class Cliente:
         except ConnectionRefusedError:
             print("Não foi possível conectar ao servidor. Certifique-se de que o servidor está em execução.")
         except Exception as e:
-            print("Erro na conexão com o servidor ", e.args)
-    
-    def method(self):
-        autenticado = login(self.__client_socket)
-        if not autenticado:
+            print("Erro na conexão com o servidor ", e.args, e)
             self.fechar_conexao()
-    
 
-    def fechar_conexao(self):
-        self.__client_socket.close()
 
 if __name__ == "__main__":
     cliente = Cliente()

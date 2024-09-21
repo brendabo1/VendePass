@@ -2,13 +2,13 @@ import json
 import re
 
 
-def salvar_usuarios(dados, nome_arquivo="data/usuarios.json"):
+def salvar_usuarios(dados, nome_arquivo):
     with open(nome_arquivo, 'w+') as arquivo:
         json_obj=json.dumps(dados)
         arquivo.write(json_obj)  # Salvando como JSON
 
 # Função para carregar os usuários de um arquivo JSON
-def carregar_usuarios(arquivo="data/usuarios.json"):
+def carregar_usuarios(arquivo):
     try:
         with open(arquivo, 'r') as arquivo:
             return json.load(arquivo)
@@ -20,7 +20,7 @@ def carregar_usuarios(arquivo="data/usuarios.json"):
 def autenticar_usuario(iduser, senha, nome_arquivo):
     usuarios = carregar_usuarios(nome_arquivo)
     for usuario in usuarios:
-        if usuario['iduser'] == iduser and usuario['senha'] == senha:
+        if usuario['id'] == iduser and usuario['senha'] == senha:
             return usuario  # Autenticação bem-sucedida
     return None  # Autenticação falhou
 
@@ -75,7 +75,7 @@ def adicionar_pedido(id, pedido, arquivo):
     salvar_usuarios(usuarios, arquivo)
     print(f"Pedido adicionado ao usuário {id}.")
 
-def inicializa_usuarios(arquivo_usuarios="data/usuarios.json"):
+def inicializa_usuarios(arquivo_usuarios):
     # Adicionando novos usuários
     cria_novo_usuario("João", "senha123", arquivo_usuarios)
     cria_novo_usuario("Maria", "senha456", arquivo_usuarios)
@@ -90,11 +90,11 @@ def inicializa_usuarios(arquivo_usuarios="data/usuarios.json"):
 
 # Adicionando um pedido para o usuário 'USR001'
 #adicionar_pedido('USR002', novo_pedido, arquivo_usuarios)
-inicializa_usuarios()
-usuarios_carregados = carregar_usuarios()
-print("\nUsuários carregados:")
-for u in usuarios_carregados:
-    print(u)
+# inicializa_usuarios()
+# usuarios_carregados = carregar_usuarios()
+# print("\nUsuários carregados:")
+# for u in usuarios_carregados:
+#     print(u)
 
     
 

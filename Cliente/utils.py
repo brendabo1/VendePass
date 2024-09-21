@@ -8,11 +8,28 @@ def login(socket):
     while not valido: 
         user_id = input("ID: ")
         if user_id == 'x' or user_id == 'X':
-            return valido
+            enviar_mensagem(socket, 'LOGOUT', None)
+            break
         senha = input("Senha: ")
-        enviar_mensagem(socket, 'LOGIN', {'id': user_id, 'senha': senha})
-        receber_mensagem(socket)
-        # return valido
+        if not user_id or not senha:
+            print("Usuário e senha não podem estar vazios.") 
+        else: 
+            valido = autentica(socket, user_id, senha)  
+        
+    return valido
+
+def autentica(socket, user, senha):
+    
+    enviar_mensagem(socket, 'LOGIN', {'id': user, 'senha': senha})
+    # Recebe a resposta do servidor
+    tipo, dados = receber_mensagem(socket)
+    if tipo == 'LOGIN_RESPOSTA':
+        if dados.get('sucesso'):
+            print("Login bem-sucedido.\n")
+            return True   
+        else:
+            print("ID e senha incorretos\n")
+            return False
     
 def solicitar_rotas(self):
     requisicao = {"tipo": "listar_rotas"}
@@ -49,7 +66,44 @@ def validar_codigo_aeroporto(codigo):
     """
     return len(codigo) == 3 and codigo.isalpha() and codigo.isupper()
 
-def menu():
+def menu2():
+    menu = True
+
+    while menu:
+        print("--------------------- MENU ---------------------\n\n")
+        print("1- Listar Rotas")
+        print("2- Comprar passagem")
+        print("3- Sair")
+
+        menuOption = input("Digite a opção do menu: ")
+        if menuOption == '1':
+            rotas = cliente.solicitar_rotas()
+            print("Rotas disponíveis:")
+            for rota in rotas:
+                status = "Disponível" if rota["disponivel"] else "Indisponível"
+                print(f'{rota["origem"]} -> {rota["destino"]}: {status} - Preço: {rota["preco"]}')
+
+            # Solicitar compra de passagem
+            origem = input("Escolha a origem: ")
+            destino = input("Escolha o destino: ")
+            assento = input("Escolha o assento: ")
+
+            resposta_final = cliente.comprar_passagem(origem, destino, assento)
+            print(resposta_final["mensagem"])
+            if resposta_final["status"] == "sucesso":
+                print(f"Preço: {resposta_final['preco']}")
+
+        elif menuOption == "2":
+            print("SAINDO")
+            cliente.fechar_conexao()
+            menu = False
+        else:
+            print("DIGITE UM VALOR VÁLIDO")
+        
+    print("FIM DO PROGRAMA")
+    
+
+def menu2():
     menu = True
 
     while menu:
