@@ -1,9 +1,8 @@
 # encoding: utf-8
-
 import json
 
 
-def salvar_grafo(grafo, arquivo="data/grafo_rotas.json"):
+def salvar_grafo(grafo, arquivo):
     """
     Salva o grafo de rotas em um arquivo JSON.
     
@@ -21,7 +20,7 @@ def salvar_grafo(grafo, arquivo="data/grafo_rotas.json"):
     except Exception as e:
         print(f"Erro ao salvar o grafo em '{arquivo}': {e}")
 
-def carregar_grafo(arquivo='rotas3.json'):
+def carregar_grafo(arquivo):
     """
     Carrega o grafo de rotas a partir de um arquivo JSON.
     
@@ -42,29 +41,29 @@ def carregar_grafo(arquivo='rotas3.json'):
         print(f"Erro ao carregar o grafo de '{arquivo}': {e}")
         return None
 
-def listar_todas_rotas(rotas):
+def listar_todas_rotas(arquivo_grafo):
     """
     Lista todas as rotas do sistema, exibindo origem, destino, código do voo e duração.
 
     Parâmetros:
     - rotas (dict): Estrutura do grafo de rotas com voos e assentos.
     """
-    # Cabeçalho da tabela
-    print(f"{'Origem':<10} {'Destino':<10} {'Voo':<10} {'Duração':<10}")
-    print("-" * 40)
+    grafo = carregar_grafo(arquivo_grafo)
+    rotas_encontradas = []
     
-    for origem, destinos in rotas.items():
+    for origem, destinos in grafo.items():
         for destino, voos in destinos.items():
             for voo in voos:
-                origem_str = origem
-                destino_str = destino
-                voo_str = voo['voo']
-                duracao_str = voo['duracao']
-                print(f"{origem_str:<10} {destino_str:<10} {voo_str:<10} {duracao_str:<10}")
-    print("-" * 40)  # Linha de fechamento
+                rota = {
+                    'origem': origem,
+                    'destino': destino,
+                    'voo': voo['voo'],
+                    'duracao': voo['duracao']
+                }
+                rotas_encontradas.append(rota)
+    return rotas_encontradas
 
-
-def listar_rotas_possiveis(rotas, origem, destino):
+def buscar_rotas_possiveis(arquivo_grafo, origem, destino):
     """
     Lista todas as rotas possíveis do aeroporto de origem até o destino.
     Permite que o usuário escolha uma das rotas listadas.
@@ -77,6 +76,7 @@ def listar_rotas_possiveis(rotas, origem, destino):
     Retorna:
     - list: Rota escolhida pelo usuário (lista de voos).
     """
+    rotas = carregar_grafo(arquivo_grafo)
     caminhos = []  # Lista para armazenar todas as rotas encontradas
 
     def dfs(current, target, path, visited):
@@ -188,51 +188,51 @@ def listar_rotas_possiveis(rotas, origem, destino):
 #             yield caminho_maior
 
 
-def reservar_assento(origem, destino, cod_voo, cod_assento, arquivo="grafo_rotas.json"):
-    """
-    Reserva um assento para um voo específico, modificando o grafo de rotas e salvando no arquivo JSON.
+# def reservar_assento(origem, destino, cod_voo, cod_assento, arquivo="grafo_rotas.json"):
+#     """
+#     Reserva um assento para um voo específico, modificando o grafo de rotas e salvando no arquivo JSON.
     
-    Parâmetros:
-    - origem (str): Aeroporto de origem.
-    - destino (str): Aeroporto de destino.
-    - cod_voo (str): Código do voo.
-    - cod_assento (str): Código do assento a ser reservado.
-    - arquivo (str): Nome do arquivo JSON para salvar o grafo atualizado.
+#     Parâmetros:
+#     - origem (str): Aeroporto de origem.
+#     - destino (str): Aeroporto de destino.
+#     - cod_voo (str): Código do voo.
+#     - cod_assento (str): Código do assento a ser reservado.
+#     - arquivo (str): Nome do arquivo JSON para salvar o grafo atualizado.
     
-    Retorna:
-    - None
-    """
-    # Carregar o grafo atual do arquivo JSON
-    rotas = carregar_grafo(arquivo)
+#     Retorna:
+#     - None
+#     """
+#     # Carregar o grafo atual do arquivo JSON
+#     rotas = carregar_grafo(arquivo)
 
-    if not rotas:
-        print("Erro ao carregar o grafo.")
-        return
+#     if not rotas:
+#         print("Erro ao carregar o grafo.")
+#         return
 
-    # Verificar se a rota existe no grafo
-    if origem not in rotas or destino not in rotas[origem]:
-        print(f"Rota de {origem} para {destino} não encontrada.")
-        return
+#     # Verificar se a rota existe no grafo
+#     if origem not in rotas or destino not in rotas[origem]:
+#         print(f"Rota de {origem} para {destino} não encontrada.")
+#         return
     
-    # Buscar o voo correspondente e tentar reservar o assento
-    for voo in rotas[origem][destino]:
-        if voo['voo'] == cod_voo:
-            # Procurar o assento disponível
-            for assento in voo['assentos']:
-                if assento['cod'] == cod_assento:
-                    if assento['disponivel']:
-                        # Reservar o assento
-                        assento['disponivel'] = False
-                        print(f"Assento {cod_assento} reservado com sucesso no {cod_voo}.")
+#     # Buscar o voo correspondente e tentar reservar o assento
+#     for voo in rotas[origem][destino]:
+#         if voo['voo'] == cod_voo:
+#             # Procurar o assento disponível
+#             for assento in voo['assentos']:
+#                 if assento['cod'] == cod_assento:
+#                     if assento['disponivel']:
+#                         # Reservar o assento
+#                         assento['disponivel'] = False
+#                         print(f"Assento {cod_assento} reservado com sucesso no {cod_voo}.")
                         
-                        # Salvar o grafo modificado no arquivo JSON
-                        salvar_grafo(rotas, arquivo)
-                        return
-                    else:
-                        print(f"Assento {cod_assento} já está reservado.")
-                        return
+#                         # Salvar o grafo modificado no arquivo JSON
+#                         salvar_grafo(rotas, arquivo)
+#                         return
+#                     else:
+#                         print(f"Assento {cod_assento} já está reservado.")
+#                         return
     
-    print(f"Voo {cod_voo} ou assento {cod_assento} não encontrados.")
+#     print(f"Voo {cod_voo} ou assento {cod_assento} não encontrados.")
 
 """
 (SSA) Salvador - Aeroporto Deputado Luís Eduardo Magalhães 
@@ -407,10 +407,92 @@ rotas2 = {
     }
 }
 
+def buscar_rotas(origem, destino, arquivo_grafo):
+    """
+    Busca todas as rotas possíveis de origem até destino.
+    
+    Parâmetros:
+    - origem (str): Código do aeroporto de origem.
+    - destino (str): Código do aeroporto de destino.
+    
+    Retorna:
+    - list: Lista de rotas encontradas.
+    """
+    rotas = carregar_grafo(arquivo_grafo)
+    if not rotas:
+        print("Nenhuma rota carregada.")
+        return None
+    rotas_encontradas = []
+    if origem in rotas and destino in rotas[origem]:
+        for voo in rotas[origem][destino]:
+            if voo['disponivel']:
+                rota = {
+                    'itinerario': [origem, destino],
+                    'voos': [{
+                        'voo': voo['voo'],
+                        'duracao': voo['duracao']
+                    }],
+                    'id': voo['voo']  # Usaremos o código do voo como ID único da rota
+                }
+                rotas_encontradas.append(rota)
+    else:
+        print(f"Rota de '{origem}' para '{destino}' não encontrada.")
+    return rotas_encontradas
 
-# listar_todas_rotas(rotas3)
+def checa_disponibilidade_voo(origem, destino, cod_voo, arquivo_grafo):
+    rotas = carregar_grafo(arquivo_grafo)
+    
+    for voo in rotas[origem][destino]:
+        if voo['voo'] == cod_voo:
+            for assento in voo['assentos']:
+                if not assento['disponivel']:
+                    # Voo esgotado
+                    return False
+                continue
+    return True
+
+def reservar_assento(origem, destino, cod_voo, cod_assento, arquivo_grafo):
+    """
+    Reserva um assento específico em um voo e salva o grafo atualizado.
+    
+    Parâmetros:
+    - origem (str): Código do aeroporto de origem.
+    - destino (str): Código do aeroporto de destino.
+    - cod_voo (str): Código do voo.
+    - cod_assento (str): Código do assento a ser reservado.
+    - arquivo (str): Caminho para o arquivo JSON de rotas.
+    
+    Retorna:
+    - dict: Resultado da operação com status e mensagem.
+    """
+    rotas = carregar_grafo(arquivo_grafo)
+    if not rotas:
+        #logging.error("Erro ao carregar rotas para reserva.")
+        return {'sucesso': False, 'mensagem': 'Erro ao carregar rotas.'}
+    
+    if origem not in rotas:
+        #logging.warning(f"Origem '{origem}' não encontrada.")
+        return {'sucesso': False, 'mensagem': f"Origem '{origem}' não encontrada."}
+    if destino not in rotas[origem]:
+        #logging.warning(f"Destino '{destino}' não encontrado a partir de '{origem}'.")
+        return {'sucesso': False, 'mensagem': f"Destino '{destino}' não encontrado a partir de '{origem}'."}
+    
+    for voo in rotas[origem][destino]:
+        if voo['voo'] == cod_voo:
+            for assento in voo['assentos']:
+                if assento['cod'] == cod_assento:
+                    if assento['disponivel']:
+                        assento['disponivel'] = False
+                        salvar_grafo(rotas, arquivo_grafo)
+                        return {'sucesso': True, 'mensagem': f"Assento '{cod_assento}' reservado com sucesso no voo '{cod_voo}'."}
+                    else:
+                        return {'sucesso': False, 'mensagem': f"Assento '{cod_assento}' já está reservado no voo '{cod_voo}'."}
+    return {'sucesso': False, 'mensagem': f"Voo '{cod_voo}' ou assento '{cod_assento}' não encontrado."}
+
+
+
 #print(rotas2["SSA"]["FEC"])
-# listar_rotas_possiveis(rotas2, "PAV", "IOS")
-salvar_grafo(rotas2)
+#listar_rotas_possiveis(rotas2, "SSA", "IOS")
+
 
     

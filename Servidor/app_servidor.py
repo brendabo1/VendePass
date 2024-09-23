@@ -5,7 +5,10 @@ import json
 from modulos.msg_utils import enviar_mensagem, receber_mensagem
 from modulos.usuarios import autenticar_usuario
 from modulos.utils import server_login
+from modulos.rotas import listar_todas_rotas, buscar_rotas, reservar_assento
 
+ARQUIVO_USERS= "data/usuarios.json"
+ARQUIVO_GRAFO= "data/grafo_rotas.json"
 
 class Servidor():
     
@@ -23,6 +26,7 @@ class Servidor():
     def handle_client(self, conn, addr):
         print("Nova conexao funcao handle: ", addr)
         on = True
+        autenticado = False
         try:
             while on:
                 tipo, dados = receber_mensagem(conn)
@@ -31,9 +35,35 @@ class Servidor():
                     break
 
                 if tipo == 'LOGIN':
-                    autenticado = server_login (conn, dados)
-                    if autenticado:
-                        print("segue para o menu")
+                    autenticado = server_login(conn, dados, ARQUIVO_USERS)
+                
+                elif tipo == 'LISTAR_TODAS_ROTAS':
+                    if not autenticado:
+                        enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para listar rotas.'})
+                        continue
+                    all_rotas = listar_todas_rotas(ARQUIVO_GRAFO)
+                    enviar_mensagem(conn, 'TODAS_ROTAS_RESP', all_rotas)
+                
+                elif tipo == 'LISTA_ROTA':
+                    if not autenticado:
+                        enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para listar rotas.'})
+                        continue
+                    origem = dados.get('origem')
+                    destino = dados.get('destino')
+                    rotas = buscar_rotas(origem, destino, ARQUIVO_GRAFO)
+                    enviar_mensagem(conn, 'LISTA_ROTA_RESP', {'rotas': rotas})
+                
+                elif tipo == 'RESERVA':
+                    if not autenticado:
+                        enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para reservar assentos.'})
+                        continue
+                    origem = dados.get('origem')
+                    destino = dados.get('destino')
+                    cod_voo = dados.get('cod_voo')
+                    cod_assento = dados.get('cod_assento')
+                    resultado = reservar_assento(origem, destino, cod_voo, cod_assento, ARQUIVO_GRAFO)
+                    enviar_mensagem(conn, 'RESERVA_RESP', resultado)
+            
                 elif tipo == 'LOGOUT':
                     print(f"Usuário {addr} solicitou logout.")
                     enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
@@ -104,14 +134,7 @@ class Servidor():
         # self._lock.release()
         pass
 
-    def encontrar_rota(self, origem, destino):
-        for rota in gerar_caminhos(origem, destino):
-            return rota
-        return None
-    
-    def enviar_rotas(self, conn):
-        rotas_dict = [rota.to_dict() for rota in self.rotas]
-        conn.sendall(json.dumps(rotas_dict).encode())
+
     
     def processar_compra(self, conn, requisicao):
         origem = requisicao["origem"]

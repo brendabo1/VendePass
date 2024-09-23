@@ -1,6 +1,6 @@
 import socket
 import json
-from utils import login, solicitar_rotas
+from utils import login, exibe_todas_rotas, listar_rota, reservar_assento
 from msg_utils import enviar_mensagem, receber_mensagem
 
 class Cliente:
@@ -11,17 +11,45 @@ class Cliente:
 
 
     def method(self):
-        try:
-            autenticado = login(self.__client_socket)
-            if not autenticado:
-                self.fechar_conexao()
-            else:
-                print("autenticado")
-                self.fechar_conexao()
-        except Exception as e:
-            print("Erro na conexão com o servidor ", e.args)
-    
+        menu = True
+        autenticado = login(self.__client_socket)
+        while menu:
+            print("--------------------- MENU ---------------------\n\n")
+            print("1- Listar Todas as Rotas")
+            print("2- Escolher Rota")
+            print("3- Sair")
 
+            menuOption = input("Digite a opção do menu: ")
+            if menuOption == '1':
+                all_rotas = exibe_todas_rotas(self.__client_socket)
+
+            elif menuOption == "2":
+                rota_escolhida = listar_rota(self.__client_socket)
+                if rota_escolhida:
+                    origem = rota_escolhida['itinerario'][0]
+                    destino = rota_escolhida['itinerario'][-1]
+                    reservar_assento(self.__client_socket, origem, destino, rota_escolhida)
+                
+            elif menuOption == "3":
+                print("Saindo...")
+                enviar_mensagem(socket, 'LOGOUT', None)
+                cliente.fechar_conexao()
+                menu = False
+            else:
+                print("Opção inválida. Por favor, escolha novamente.\n")
+            
+        #print("FIM DO PROGRAMA")
+            # if not autenticado:
+            #     print("nao autenticado")
+            # else:
+            #     print("autenticado")
+
+        # except Exception as e:
+        #     print("Erro na conexão com o servidor ", e.args)
+        # finally:
+        #     self.fechar_conexao()
+
+    
     def fechar_conexao(self):
         self.__client_socket.close()
 

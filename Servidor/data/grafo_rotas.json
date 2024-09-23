@@ -33,7 +33,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "disponivel": false
                     },
                     {
                         "cod": "1B",

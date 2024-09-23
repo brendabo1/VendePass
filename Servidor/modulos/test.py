@@ -310,41 +310,74 @@ def reservar_assento(rotas, origem, destino, voo_numero, assento_cod):
     # Se o voo não foi encontrado
     return f"Voo '{voo_numero}' não encontrado de '{origem}' para '{destino}'."
 
+def buscar_rota(origem, destino, rotas):
+    """
+    Busca todas as rotas possíveis de origem até destino.
+    
+    Parâmetros:
+    - origem (str): Código do aeroporto de origem.
+    - destino (str): Código do aeroporto de destino.
+    
+    Retorna:
+    - list: Lista de rotas encontradas.
+    """
+    if not rotas:
+        print("Nenhuma rota carregada.")
+        return None
+    rotas_encontradas = []
+    if origem in rotas and destino in rotas[origem]:
+        for voo in rotas[origem][destino]:
+            if voo['disponivel']:
+                rota = {
+                    'itinerario': [origem, destino],
+                    'voos': [{
+                        'voo': voo['voo'],
+                        'assentos':voo['assentos'],
+                        'duracao': voo['duracao']
+                    }],
+                    'id': voo['voo']  # Usaremos o código do voo como ID único da rota
+                }
+                rotas_encontradas.append(rota)
+    else:
+        print(f"Rota de '{origem}' para '{destino}' não encontrada.")
+    return rotas_encontradas
+
 # Exemplo de Uso Interativo
 if __name__ == "__main__":
-    print("Bem-vindo ao Sistema de Rotas Aéreas!\n")
-    # Solicita ao usuário a origem e o destino
-    origem_input = input("Digite o código do aeroporto de origem: ").strip().upper()
-    destino_input = input("Digite o código do aeroporto de destino: ").strip().upper()
+    print(buscar_rota("SSA", "FEC", rotas3))
+    # print("Bem-vindo ao Sistema de Rotas Aéreas!\n")
+    # # Solicita ao usuário a origem e o destino
+    # origem_input = input("Digite o código do aeroporto de origem: ").strip().upper()
+    # destino_input = input("Digite o código do aeroporto de destino: ").strip().upper()
 
-    # Chama a função para listar rotas possíveis
-    rota_selecionada = listar_rotas_possiveis(rotas3, origem_input, destino_input)
+    # # Chama a função para listar rotas possíveis
+    # rota_selecionada = listar_rotas_possiveis(rotas3, origem_input, destino_input)
 
-    if rota_selecionada:
-        print("Você pode prosseguir para reservar assentos na rota escolhida.")
-        # Exemplificação de reserva para cada voo na rota escolhida
-        for voo, _ in rota_selecionada:
-            print(f"\nReservando assentos para o {voo['voo']} (Duração: {voo['duracao']})")
-            print("Assentos disponíveis:")
-            assentos_disponiveis = [assento['cod'] for assento in voo['assentos'] if assento['disponivel']]
-            if not assentos_disponiveis:
-                print("  Nenhum assento disponível neste voo.")
-                continue
-            for assento in assentos_disponiveis:
-                print(f"  - {assento}")
+    # if rota_selecionada:
+    #     print("Você pode prosseguir para reservar assentos na rota escolhida.")
+    #     # Exemplificação de reserva para cada voo na rota escolhida
+    #     for voo, _ in rota_selecionada:
+    #         print(f"\nReservando assentos para o {voo['voo']} (Duração: {voo['duracao']})")
+    #         print("Assentos disponíveis:")
+    #         assentos_disponiveis = [assento['cod'] for assento in voo['assentos'] if assento['disponivel']]
+    #         if not assentos_disponiveis:
+    #             print("  Nenhum assento disponível neste voo.")
+    #             continue
+    #         for assento in assentos_disponiveis:
+    #             print(f"  - {assento}")
 
-            # Verifica se o assento está disponível
-            assento_found = False
-            while not assento_found:
-                assento_escolhido = input("Digite o código do assento que deseja reservar (ou 'pular' para o próximo voo): ").strip().upper()
-                if assento_escolhido.lower() == 'pular':
-                    break
+    #         # Verifica se o assento está disponível
+    #         assento_found = False
+    #         while not assento_found:
+    #             assento_escolhido = input("Digite o código do assento que deseja reservar (ou 'pular' para o próximo voo): ").strip().upper()
+    #             if assento_escolhido.lower() == 'pular':
+    #                 break
                 
-                for assento in voo['assentos']:
-                    if assento['cod'] == assento_escolhido and assento['disponivel']:
-                        assento_found = True
-                        assento['disponivel'] = False
-                        print(f"Assento '{assento_escolhido}' reservado com sucesso no voo '{voo['voo']}'.")
-                        break
-                if not assento_found:
-                    print(f"Assento '{assento_escolhido}' não encontrado ou já reservado.")
+    #             for assento in voo['assentos']:
+    #                 if assento['cod'] == assento_escolhido and assento['disponivel']:
+    #                     assento_found = True
+    #                     assento['disponivel'] = False
+    #                     print(f"Assento '{assento_escolhido}' reservado com sucesso no voo '{voo['voo']}'.")
+    #                     break
+    #             if not assento_found:
+    #                 print(f"Assento '{assento_escolhido}' não encontrado ou já reservado.")
