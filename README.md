@@ -57,6 +57,7 @@ O Docker é uma plataforma de software open source que permite a criação, o te
 </details>
 
 ## Metodologia
+Para solucionar o problema proposto, as temáticas de sistemas distribuídos com uso de API socket e protocolo TCP/IP foram discutidas e diferentes abordagens analisadas. Para tal execução, a linguagem de programação Pyhton foi escolhida implementando a interface nativa do socket.
 
 ### Arquitetura da Solução
 
@@ -134,6 +135,8 @@ O uso da plataforma Docker otimiza a execução do sistema ao dispensar a config
 ### Desempenho e Avaliação
 Para avaliação e comparação do desempenho do sistema, scripts para a simulação de 5, 10 e 20 usuários conectados simultaneamente foram executados. Comparando-se a performance da execução sequencial e multithread, em todos os cenários avaliados a execução multithread atendeu aos clientes em menor tempo.
 ## Conclusão
+A solução abordada desenvolveu um sistema de venda de passagens aéreas utilizando a arquitetura cliente-servidor e a interface de sockets nativa do TCP/IP atendendo aos requisitos definidos. O sistema provê serviços de busca, compra de passagens e reserva de assetos ultilizando estratégias multrithread para conexões simulâneas e mutexes para controle de concorrência. Dessa forma, o projeto apresentou desempenho satisfatório podendo, futuramente, incluir interface gráfica, criptografia dos dados de usuários e integração com banco de dados.
+
 ## Referências
 
 AWS Docker - Amazon Web Services. Disponível em: <https://aws.amazon.com/pt/docker/>.
