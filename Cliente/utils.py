@@ -4,8 +4,8 @@ import re
 
 def login(socket):
     valido = False
-    print('=' * 44 +  "LOGIN " + '=' * 44 +"\n\n" )
-    print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
+    print('=' * 22 +  "LOGIN " + '=' * 22 +"\n\n" )
+    print("\033[31m" +"Para Sair ID: 'x'" +"\033[0m")
     while not valido: 
         user_id = input("ID: ")
         if user_id == 'x' or user_id == 'X':
@@ -300,15 +300,19 @@ def buscar_rotas_cliente(sock):
     while invalido:
         print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
         origem = input("Digite o código do aeroporto de origem (3 letras maiúsculas): ").strip().upper()
-        if not validar_codigo_aeroporto(origem):
-            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
-            continue
-        destino = input("Digite o código do aeroporto de destino (3 letras maiúsculas): ").strip().upper()
-        if not validar_codigo_aeroporto(destino):
-            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
-            continue
-        if origem == 'x' or destino == 'x':
+        if origem == 'x':
             return None
+        elif not validar_codigo_aeroporto(origem):
+            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
+            continue
+
+        destino = input("Digite o código do aeroporto de destino (3 letras maiúsculas): ").strip().upper()
+        if destino == 'x':
+            return None
+        elif not validar_codigo_aeroporto(destino):
+            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
+            continue
+       
         invalido = False
         break
 
@@ -361,7 +365,6 @@ def buscar_rotas_cliente(sock):
                     for trecho in rota_escolhida:
                         print(f"    - {trecho['voo']}, Duração: {trecho['duracao']}")
                     print("")
-                    print(voos_selecionados)
                     return voos_selecionados
                 elif escolha == len(rotas) + 1:
                     print("Cancelando a escolha de rota...")

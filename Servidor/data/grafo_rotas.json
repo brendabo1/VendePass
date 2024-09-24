@@ -224,6 +224,108 @@
                 "duracao": "50m",
                 "avaliable": true
             }
+        ],
+        "VDC": [
+            {
+                "voo": "Voo 337",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "2B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2C",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "1h20m",
+                "avaliable": true
+            }
+        ]
+    },
+    "VDC": {
+        "FEC": [
+            {
+                "voo": "Voo CE321",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "2B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2C",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "1h",
+                "avaliable": true
+            }
+        ],
+        "GNM": [
+            {
+                "voo": "Voo BC490",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "40m",
+                "avaliable": true
+            }
+        ],
+        "TXF": [
+            {
+                "voo": "Voo AD499",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "25m",
+                "avaliable": true
+            }
         ]
     },
     "LEC": {
@@ -270,6 +372,62 @@
                     }
                 ],
                 "duracao": "50m",
+                "avaliable": true
+            }
+        ]
+    },
+    "BPS": {
+        "FEC": [
+            {
+                "voo": "Voo CB957",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2B",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "2h",
+                "avaliable": true
+            }
+        ],
+        "BRA": [
+            {
+                "voo": "Voo CB174",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "1B",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2B",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "1C",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "1h20m",
                 "avaliable": true
             }
         ]

@@ -1,7 +1,7 @@
 # encoding: utf-8
 import json
 import threading
-from modulos.msg_utils import enviar_mensagem, receber_mensagem
+from modulos.msg_utils import enviar_mensagem
 
 
 lock = threading.RLock()

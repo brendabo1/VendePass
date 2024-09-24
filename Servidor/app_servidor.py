@@ -32,7 +32,7 @@ class Servidor():
             while on:
                 tipo, dados = receber_mensagem(conn)
                 if not tipo:
-                    print(f"Conexão com {addr} encerrada condicional de tipo.")
+                    print(f"Conexão com {addr} encerrada.")
                     conn.close()
                     break
 
@@ -78,7 +78,8 @@ class Servidor():
                     break
                 else:
                     enviar_mensagem(conn, "ERRO", {"mensagem": "Tipo de requisição desconhecido."})
-
+        except socket.error as e:
+            print(f"Erro na conexão com {addr}: {e}")
         except Exception as e:
             print(f"Erro na conexão com {addr}: {e}")
         finally:
@@ -93,24 +94,22 @@ class Servidor():
         """Inicia a execução do serviço"""
 
         endpoint = (self._host, self._port)
-        try:
-            self._tcp.bind(endpoint)
-            self._tcp.listen()
-            print("O servidor foi iniciado em ", self._host, self._port)
-            while True:
+        self._tcp.bind(endpoint)
+        self._tcp.listen()
+        while True:
+            try:
+                print("O servidor foi iniciado em ", self._host, self._port)
                 connection, client = self._tcp.accept()  #aguarda a conexao do cliente
-                # thread handle client
                 self._threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
                 self._threadPool[client].start()
                 print(f"Atendendo {client} em uma nova thread.")
-
-                #self.handle_client(connection, client)
-        except Exception as e:
-            print("Erro: ", e.args)
-        finally:
-            connection.close()
-            # for client_thread in self._threadPool:
-            #     client_thread.join()
+            except KeyboardInterrupt:
+                print("Servidor desligando...")
+                self.fechar_conexao_servidor()
+                break
+            except Exception as e:
+                print("Erro: ", e.args)
+            
     
 if __name__ == "__main__":
     host = '127.0.0.1'  # Localhost
