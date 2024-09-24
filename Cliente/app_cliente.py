@@ -1,6 +1,6 @@
 import socket
 import json
-from utils import login, exibe_todas_rotas, listar_rota, buscar_rotas_cliente, reservar_assentos_cliente
+from utils import login, exibe_todas_rotas, buscar_rotas_cliente, reservar_assentos_cliente
 from msg_utils import enviar_mensagem, receber_mensagem
 
 class Cliente:

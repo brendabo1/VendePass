@@ -6,7 +6,7 @@ from modulos.msg_utils import enviar_mensagem, receber_mensagem
 from modulos.usuarios import autenticar_usuario
 from modulos.utils import server_login
 from modulos.rotas import listar_todas_rotas, buscar_rotas2, buscar_assentos_disponiveis, tratar_reserva_assentos
-from modulos.grafo import carregar_grafo, salvar_grafo
+from modulos.grafo import carregar_grafo
 
 ARQUIVO_USERS= "data/usuarios.json"
 ARQUIVO_GRAFO= "data/grafo_rotas.json"
