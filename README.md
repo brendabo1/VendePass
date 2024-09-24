@@ -49,6 +49,7 @@ Já os protocolos de transporte, segundo Tanenbaum (2011), determinam como os da
 
 </details>
 
+
 <details>
 <summary> <b>Plataforma Docker</b> </summary>
 O Docker é uma plataforma de software open source que permite a criação, o teste e a implantação de aplicações rapidamente. Esta solução cria pacotes de software em unidades padronizadas e independentes chamadas de contêineres que têm tudo o que o software precisa para ser executado, inclusive bibliotecas, ferramentas de sistema e  código sem demandar que todos estes recursos sejam instalados na máquina física. Ao usar o Docker, é possível implantar, padronizar as operações e escalar rapidamente aplicações em qualquer ambiente com facilidade e melhor  utilização de recursos.(“AWS Docker - Amazon Web Services”, [s.d.]).
@@ -56,6 +57,7 @@ O Docker é uma plataforma de software open source que permite a criação, o te
 </details>
 
 ## Metodologia
+
 ### Arquitetura da Solução
 
 A solução desenvolvida utiliza o modelo de arquitetura de rede cliente-servidor. Nesta infraestrututra, a iteração é dada através envio de solicitações ou requisições pelo dito cliente que aguarda a resposta do lado denominado servidor. Desse modo, o servidor pode ser definido como um sistema computacional que armazena dados e provê serviços para serem consumidos pelos clientes, que também podem ser outros sistemas.  
@@ -81,11 +83,56 @@ No sistema VendePass, o servidor é responsável pelos serviços de login, lista
 </div>
 
 ### Paradigma de Comunicação
+Para o desenvolvimento da solução, o paradigma de comunicação foi adotado devido à sua eficiência, simplicidade e escalabilidade para aplicações distribuídas. Neste modelo, cada solicitação de comunicação entre cliente e servidor é tratada de forma independente, sem depender do histórico de interações anteriores. Ou seja, o servidor não mantém informações sobre as interações passadas ou o "estado" da comunicação com o cliente. Cada solicitação contém todas as informações necessárias para ser processada, e após a resposta, o servidor não mantém registro dessa solicitação.
+
+Esse paradigma simplifica o design de sistemas, especialmente em arquiteturas distribuídas e em larga escala, onde a manutenção do estado entre solicitações pode ser onerosa ou complexa (TANENBAUM; WETHERALL, 2011).
+
 ### Protocolo de Comunicação
+Dado o uso da rede internet na solução, o conjunto de protocolos Transmission Control Protocol/ Internet Protocol (TCP/IP) foi utilizado. Este conjunto de protocolos específicos, organizados nas camadas exibidas na Figura 3, descreve como os dados devem ser transmitidos de um dispositivo para outro por meio de uma rede. 
+
+<div align="center">
+  <figure>  
+    <img src="images/tcp-ip.png" width="150px">
+    <figcaption>
+      <p align="center"> 
+
+**Figura 1** - Exemplo de endereço IP e Porta para configuração do soquete
+    </figcaption>
+  </figure>
+</div>
+
+A arquitetura TCP/IP (Transmission Control Protocol/Internet Protocol) reune os protocolos IP da camada de rede, TCP e UDP da camada de transporte e é o modelo básico de comunicação em redes, especialmente na internet. Sua divisão em camadas, com protocolos distintos para cada função, garante flexibilidade, escalabilidade e confiabilidade, permitindo que diferentes redes e dispositivos interajam de maneira eficiente e robusta.
+
+Para garantir a confiabilidade e integridade dos dados na comunicação entre cliente e servidor, o protocolo TCP foi adotado juntamente com o endereçamento IPv4 por meio de um STREAM SOCKET.
+
 ### Formatação e tratamento de Dados
+
+Para o trágefo de dados entre cliente e servidor, o Javascript Object Notation (JSON) foi utilizado. Este padrão amplamente adotado em aplicações na transmissão e armazenamento de dados é baseado em texto e tem como vantagem sua estrutura leve, simplicidade e versatilidade, compativel com diversas plataformas e linguagens de programação. 
+
+Diante da organização dos dados no formato JSON em uma estrutura de chave-valor, as requisições e respostas tem um padrão: 
+- `tipo`: string que identifica o tipo da mensagem, seja ela uma requisição ou resposta, ex: 'LOGIN', 'LOGIN_RESPOSTA'.
+- `dado`: dicionário de dados associado a mensagem.
+
 ### Tratamento de Conexões Simultâneas
+Visando a realização de múltiplas operações ao mesmo tempo na plataforma de venda de passagens, onde diversos usuários realizam transações de forma simultânea, a técnica de multithread foi implementada. Dessa maneira, cada solicitação de compra de passagem pode ser tratada por uma thread separada, permitindo que vários usuários realizem suas transações ao mesmo tempo de momo independente uns dos outros.
+
+A otimização do paralelismo inclui também o desacoplamento das operações de entradas e saídas de dados e validação das operações de processamento. Além disso, minimizar as seções críticas reduz a perda de eficiência no controle de acesso aos recursos compartilhados.
+
+Essas estratégias são essenciais em sistemas com muitos acessos concorrentes e garantem a melhor usuabilidade da aplicação.
 ### Tratamento de Concorrência
-## Resultados
+No sistema de venda de passagens com conexões simultâneas, existem recursos compartilhados, a exemplo do arquivo de usuários e rotas, que exigem um controle de concorrência para evitar problemas como inconsistência dos dados. Desse modo, nas seções necessárias mutexes foram implementados para garantir a exclusão mútua e a confiabilidade dos dados.
+Os pontos onde os mutexes foram inseridos correspondem ao processo de autenticação do usuário, consulta de rotas e reserva de assento.
+
+### Confiabilidade do Sistema
+
+Para garantir a confiabilidade do sistema, o tratamento de exceções foi implementado nos pontos de conexão com o servidor e no envio e recebimento de mensagens. Assim, 
+
+### Docker
+O uso da plataforma Docker otimiza a execução do sistema ao dispensar a configuração de cada máquina física. Através de dois containers, sendo um para o servidor e um para o cliente, a aplicação pode ser executa em diferentes máquinas com a plataforma Docker.
+
+## Resultados e Discussões
+### Desempenho e Avaliação
+Para avaliação e comparação do desempenho do sistema, scripts para a simulação de 5, 10 e 20 usuários conectados simultaneamente foram executados. Comparando-se a performance da execução sequencial e multithread, em todos os cenários avaliados a execução multithread atendeu aos clientes em menor tempo.
 ## Conclusão
 ## Referências
 
