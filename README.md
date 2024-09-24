@@ -59,7 +59,47 @@ O Docker é uma plataforma de software open source que permite a criação, o te
 ## Metodologia
 Para solucionar o problema proposto, as temáticas de sistemas distribuídos com uso de API socket e protocolo TCP/IP foram discutidas e diferentes abordagens analisadas. Para tal execução, a linguagem de programação Pyhton foi escolhida implementando a interface nativa do socket.
 
-## Resultados e Discussões
+O sistema simula rotas de tráfego aéreo nas principais cidades da Bahia. Uma vez que cada voo ou rota representa a relação entre um aeroporto de origem e outro de destino, a estrutura de grafo direcionado, implementado em listas de adjacências, foi utilizada para modelar os conjuntos de objetos que tenham relacionamentos entre si. As características e estrutura do grafo permite representar redes de grandes conjuntos de dados e percorrer sequencias de nós e arestas com eficiência. Assim sendo, esta estrutura se mostrou muito adequada para a implementação de uma rede de tráfego aério, onde os vértices representam os aeroportos, nomeados com suas respectivas siglas explicitadas no Quadro 1, e as arestas referem-se às rotas ou vôos que partem de um aeroporto com destino a outro
+
+Legenda AEROPORTOS
+- (SSA) Salvador - Aeroporto Deputado Luís Eduardo Magalhães
+- (IOS) Ilhéus - Aeroporto de Ilhéus - Jorge Amado
+- (BPS) Porto Seguro - Aeroporto de Porto Seguro
+- (LEC) Lençóis - Aeroporto Horácio de Mattos
+- (PAV) Paulo Afonso- Aeroporto de Paulo Afonso
+- (BRA) Barreiras - Aeroporto de Barreiras
+- (FEC) Feira de Santana - Aeroporto João Durval Carneiro
+- (VAL) Valença - Aeroporto de Valença
+- (GNM) Guanambi - Aeroporto de Guanambi
+- (TXF) Teixeira de Freitas - Aeroporto de Teixeira de Freitas
+- (VDC) Vitória da Conquista - Aeroporto Glauber de Andrade Rocha
+
+
+
+| Origem   |  Destino  | Voo         |  Duração |
+---------- |-----------|-------------|--------  |
+|  SSA    |  FEC       | Voo AB123   |    40m   |
+|  SSA    |  FEC       | Voo AB456   |    45m   |
+|  SSA    |  LEC       | Voo AC789   |   1h25m  |
+|  SSA    |  PAV       | Voo AC490   |   2h     |
+|  SSA    |  GNM       |  Voo AB7377  |   1h45m  |
+|  SSA    |  VDC       |  Voo AC364   |   2h20m  |
+|  SSA    |  IOS       |  Voo AB912   |   2h     |
+|  FEC    |  SSA       |  Voo BA321   |   45m    |
+|  FEC    |  LEC       |  Voo BC654   |   25m    |
+|  FEC    |  VDC       |  Voo 337     |   1h35m  |
+|  VDC    |  FEC       |  Voo CE321   |   1h20m  |
+|  VDC    |  GNM       |  Voo BC490   |   40m    | 
+|  VDC    |  TXF       |  Voo AD499   |   25m    |
+|  LEC    |  SSA       |  Voo CA987   |   1h30m  |
+|  LEC    |  FEC       |  Voo CB654   |   25m    |
+|  BPS    |  FEC       |  Voo CB957   |   2h     |
+|  BPS    |  BRA       | Voo CB174    |   2h15m  |
+<p align="center"> 
+
+**Quadro 1** - Rotas do grafo de tráfero aéreo da Bahia. Cada voo representa uma aresta que relaciona um nó (aeroporto de origem) a outro nó (aeroporto de destino).
+
+</p>
 
 ### Arquitetura da Solução
 
@@ -116,6 +156,7 @@ Diante da organização dos dados no formato JSON em uma estrutura de chave-valo
 - `tipo`: string que identifica o tipo da mensagem, seja ela uma requisição ou resposta, ex: 'LOGIN', 'LOGIN_RESPOSTA'.
 - `dado`: dicionário de dados associado a mensagem.
 
+## Resultados e Discussões
 ### Tratamento de Conexões Simultâneas
 Visando a realização de múltiplas operações ao mesmo tempo na plataforma de venda de passagens, onde diversos usuários realizam transações de forma simultânea, a técnica de multithread foi implementada. Dessa maneira, cada solicitação de compra de passagem pode ser tratada por uma thread separada, permitindo que vários usuários realizem suas transações ao mesmo tempo de momo independente uns dos outros.
 

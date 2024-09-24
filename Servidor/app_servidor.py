@@ -3,7 +3,7 @@ import threading
 import json
 #from modulos.rotas import gerar_caminhos, listar_caminhos_disponiveis
 from modulos.msg_utils import enviar_mensagem, receber_mensagem
-from modulos.usuarios import autenticar_usuario
+from modulos.usuarios import autenticar_usuario, inicializa_usuarios
 from modulos.utils import server_login
 from modulos.rotas import listar_todas_rotas, buscar_rotas2, buscar_assentos_disponiveis, tratar_reserva_assentos
 from modulos.grafo import carregar_grafo
@@ -29,6 +29,7 @@ class Servidor():
         on = True
         autenticado = False
         try:
+            inicializa_usuarios(ARQUIVO_USERS)
             while on:
                 tipo, dados = receber_mensagem(conn)
                 if not tipo:

@@ -25,7 +25,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "1h30m",
+                "duracao": "40m",
                 "avaliable": true
             },
             {
@@ -44,7 +44,7 @@
                         "avaliable": false
                     }
                 ],
-                "duracao": "1h20m",
+                "duracao": "45m",
                 "avaliable": true
             }
         ],
@@ -69,7 +69,7 @@
                         "avaliable": false
                     }
                 ],
-                "duracao": "2h",
+                "duracao": "1h25m",
                 "avaliable": true
             }
         ],
@@ -119,7 +119,7 @@
                         "avaliable": false
                     }
                 ],
-                "duracao": "2h",
+                "duracao": "1h45m",
                 "avaliable": true
             }
         ],
@@ -144,7 +144,7 @@
                         "avaliable": false
                     }
                 ],
-                "duracao": "2h",
+                "duracao": "2h20m",
                 "avaliable": true
             }
         ],
@@ -200,7 +200,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "1h30m",
+                "duracao": "45m",
                 "avaliable": true
             }
         ],
@@ -221,7 +221,7 @@
                         "avaliable": false
                     }
                 ],
-                "duracao": "50m",
+                "duracao": "25m",
                 "avaliable": true
             }
         ],
@@ -250,7 +250,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "1h20m",
+                "duracao": "1h35m",
                 "avaliable": true
             }
         ]
@@ -281,7 +281,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "1h",
+                "duracao": "1h20m",
                 "avaliable": true
             }
         ],
@@ -350,7 +350,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "2h",
+                "duracao": "1h30m",
                 "avaliable": true
             }
         ],
@@ -371,7 +371,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "50m",
+                "duracao": "25m",
                 "avaliable": true
             }
         ]
@@ -427,7 +427,7 @@
                         "avaliable": true
                     }
                 ],
-                "duracao": "1h20m",
+                "duracao": "2h15m",
                 "avaliable": true
             }
         ]

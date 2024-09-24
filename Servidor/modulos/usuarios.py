@@ -79,7 +79,10 @@ def inicializa_usuarios(arquivo_usuarios):
     # Adicionando novos usuários
     cria_novo_usuario("João", "senha123", arquivo_usuarios)
     cria_novo_usuario("Maria", "senha456", arquivo_usuarios)
-    cria_novo_usuario("Felipe", "senha456", arquivo_usuarios)
+    cria_novo_usuario("Felipe", "senha123", arquivo_usuarios)
+    cria_novo_usuario("Ze", "senha456", arquivo_usuarios)
+    cria_novo_usuario("Ana Flavia", "senha123", arquivo_usuarios)
+    cria_novo_usuario("Pedro", "senha456", arquivo_usuarios)
 
 # novo_pedido = {
 #     "numero": 103,

@@ -219,7 +219,7 @@ def buscar_rotas_cliente(sock):
     - None: Apenas exibe as rotas recebidas.
     """
     legenda_aeroportos()
-    print('=' * 44 + " Listar Rotas" + '=' * 44 +"\n\n")
+    print('=' * 22 + " Lista de Rotas" + '=' * 22 +"\n")
     invalido = True
     while invalido:
         print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
