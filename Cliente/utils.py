@@ -4,7 +4,7 @@ import re
 
 def login(socket):
     valido = False
-    print("---------------------LOGIN---------------------\n\n")
+    print('=' * 44 +  "LOGIN " + '=' * 44 +"\n\n" )
     print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
     while not valido: 
         user_id = input("ID: ")
@@ -54,7 +54,7 @@ def exibe_todas_rotas(socket):
             print(f"Nenhuma rota encontrada.\n")
             return None
         
-        print("ROTAS")
+        print('=' * 44 + " ROTAS " + '=' * 44 +"\n\n")
         print(f"{'Origem':<10} {'Destino':<10} {'Voo':<15} {'Duração':<10}")
         print('-' * 44)
         for rota in dados:
@@ -108,8 +108,9 @@ def listar_rota(sock):
     - dict: Dados da rota selecionada pelo usuário.
     """
     legenda_aeroportos()
-    print("=== Listar Rotas ===")
-    while True:
+    print('=' * 44 + " Listar Rotas" + '=' * 44 +"\n\n")
+    invalido = True
+    while invalido:
         print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
         origem = input("Digite o código do aeroporto de origem (3 letras maiúsculas): ").strip().upper()
         if not validar_codigo_aeroporto(origem):
@@ -119,10 +120,14 @@ def listar_rota(sock):
         if not validar_codigo_aeroporto(destino):
             print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
             continue
+        if origem == 'x' or destino == 'x':
+            return None
+        invalido = False
         break
-
-    # Envia a solicitação de listagem de rotas
-    enviar_mensagem(sock, 'LISTA_ROTA', {'origem': origem, 'destino': destino})
+    
+    if not invalido:
+        # Envia a solicitação de listagem de rotas
+        enviar_mensagem(sock, 'LISTA_ROTA', {'origem': origem, 'destino': destino})
 
     # Recebe a resposta do servidor
     tipo, dados = receber_mensagem(sock)
@@ -175,7 +180,7 @@ def reservar_assento(sock, origem, destino, rota):
     Retorna:
     - bool: True se a reserva for bem-sucedida, False caso contrário.
     """
-    print("=== Reservar Assento ===")
+    print('=' * 44 + " Reservar Assento " + '=' * 44 +"\n\n" )
     voos = rota.get('voos', [])
     if not voos:
         print("Nenhum voo encontrado na rota escolhida.\n")
@@ -185,7 +190,17 @@ def reservar_assento(sock, origem, destino, rota):
     print("\nVoos na rota escolhida:")
     for idx, voo in enumerate(voos, 1):
         print(f"{idx}. {voo['voo']} - Duração: {voo['duracao']}")
-
+        for assento in voo['assentos']:
+            # Verificar se o assento é um dicionário
+            if isinstance(assento, dict):
+                if assento.get('disponivel'):  # Verifica se a chave 'disponivel' existe e é True
+                    print(assento['cod'])
+    # for idx, voo in enumerate(voos, 1):
+    #     print(f"{idx}. {voo['voo']} - Duração: {voo['duracao']}")
+    #     for assento in voo['assentos']:
+    #         for cadeira in assento:
+    #             if cadeira['disponivel']:
+    #                 print(cadeira['cod'])
     while True:
         try:
             escolha_voo = int(input(f"Escolha um voo para reservar (1-{len(voos)}): "))

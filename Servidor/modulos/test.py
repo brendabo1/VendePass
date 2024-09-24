@@ -344,7 +344,15 @@ def buscar_rota(origem, destino, rotas):
 
 # Exemplo de Uso Interativo
 if __name__ == "__main__":
-    print(buscar_rota("SSA", "FEC", rotas3))
+    #rota = buscar_rota("SSA", "FEC", rotas3)
+    voos = [{'voo': 'Voo AC490', 'assentos': [{'cod': '1A', 'disponivel': True}, {'cod': '1B', 'disponivel': False}, {'cod': '2A', 'disponível': True}, {'cod': '2B', 'disponível': False}], 'duracao': '2h'}]
+
+    for idx, voo in enumerate(voos, 1):
+        print(f"{idx}. {voo['voo']} - Duração: {voo['duracao']}")
+        for assento in voo['assentos']:
+            if assento.get('disponivel'):
+                print(assento['cod'])
+
     # print("Bem-vindo ao Sistema de Rotas Aéreas!\n")
     # # Solicita ao usuário a origem e o destino
     # origem_input = input("Digite o código do aeroporto de origem: ").strip().upper()

@@ -430,6 +430,7 @@ def buscar_rotas(origem, destino, arquivo_grafo):
                     'itinerario': [origem, destino],
                     'voos': [{
                         'voo': voo['voo'],
+                        'assentos':voo['assentos'],
                         'duracao': voo['duracao']
                     }],
                     'id': voo['voo']  # Usaremos o código do voo como ID único da rota

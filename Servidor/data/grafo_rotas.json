@@ -262,7 +262,7 @@
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "disponivel": false
                     },
                     {
                         "cod": "2A",

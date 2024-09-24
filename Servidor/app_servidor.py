@@ -54,6 +54,7 @@ class Servidor():
                     enviar_mensagem(conn, 'LISTA_ROTA_RESP', {'rotas': rotas})
                 
                 elif tipo == 'RESERVA':
+                    self._lock.acquire()
                     if not autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para reservar assentos.'})
                         continue
@@ -63,6 +64,7 @@ class Servidor():
                     cod_assento = dados.get('cod_assento')
                     resultado = reservar_assento(origem, destino, cod_voo, cod_assento, ARQUIVO_GRAFO)
                     enviar_mensagem(conn, 'RESERVA_RESP', resultado)
+                    self._lock.release()
             
                 elif tipo == 'LOGOUT':
                     print(f"Usuário {addr} solicitou logout.")
