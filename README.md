@@ -5,14 +5,14 @@
 ## Introdução
 Desde o primeiro voo de Santos Dumont, a aviação evoluiu rapidamente, passando de uma curiosidade tecnológica a um dos principais meios de transporte no mundo. Inicialmente restrito a elites e serviços militares, o transporte aéreo começou a se popularizar após a Segunda Guerra Mundial, com a expansão de rotas comerciais. A democratização do acesso ao transporte aéreo tem-se acelerado nas últimas décadas, impulsionada pelo surgimento de companhias aéreas de baixo custo que revolucionaram o setor ao oferecer tarifas mais acessíveis e ampliar a conectividade global. Nesse contexto, a tecnologia de venda de passagens aéreas desempenha um papel central, permitindo que sistemas de reserva e processamento de bilhetes acompanhem a evolução e a complexidade desse setor.
 
-Pensando nisso, foi proposto aos alunos do curso de Engenharia de Computação da Universidade Estadual de Feira de Santana(UEFS) o desenvolvimento de um sistema de comunicação usando a interface de socket nativa do TCP/IP para venda de passagens aéreas em um modelo cliente-servidor. Este relatório visa descrever objetivamente o desenvolvimento de tal solução em que o cliente, através da internet, pode comprar passagens para um destino escolhendo os trechos e assentos disponíveis. Além disso, o servidor armazena o grafo das rotas e voos provendo serviços de listagem das rotas, compra de trechos e reserva de assento(s) aos usuários. Ao final do desenvolvimento, a aplicação foi virtualizada por meio de contêineres Docker.
+Pensando nisso, foi proposto aos alunos do curso de Engenharia de Computação da Universidade Estadual de Feira de Santana(UEFS) o desenvolvimento de um sistema de comunicação usando a interface de socket nativa do TCP/IP para venda de passagens aéreas em um modelo cliente-servidor. Este relatório visa descrever objetivamente o desenvolvimento de tal solução em que os clientes, através da internet, podem comprar passagens para um destino escolhendo os trechos e assentos disponíveis. Além disso, o servidor armazena o grafo das rotas e voos provendo serviços de listagem das rotas, compra de trechos e reserva de assento(s) aos usuários. Ao final do desenvolvimento, a aplicação foi virtualizada por meio de contêineres Docker.
 
 ## Fundamentação teórica
 <details>
 <summary> <b>Interface de Programação de Aplicação (API)</b> </summary>
 Interface de Programação de Aplicação ou <i>Application Programming Interface</i> (API) é mecanismo que permite a comunicação entre dois componentes de <i>software</i> ou aplicações através de um conjunto de definições e protocolos. APIs conectam soluções e serviços, sem a necessidade de saber como esses elementos foram implementados, o que simplifica o design e favorece a colaboração entre soluções e serviços. 
 
-Por exemplo, a aplicação para a previsão do tempo em um telefone requer dados meteorológicos que exigiriam um sistema robusto no celular para o acesso às previsões. Entretanto, com o uso de uma API, a aplicação no dispositivo pode acessar e se comunicar com o sistema de software do instituto meteorológico na nuvem solicitando informações para o usuário sem implementar toda a complexidade do sistema no telefone, por exemplo. (O que é uma API? – Guia de APIs para iniciantes – AWS, [s.d.])
+Por exemplo, a aplicação para a previsão do tempo em um telefone requer dados meteorológicos que exigiriam um sistema robusto no celular para o acesso às previsões. Entretanto, com o uso de uma API, a aplicação no dispositivo pode acessar e se comunicar com o sistema de software do instituto meteorológico na nuvem solicitando informações para o usuário sem implementar toda a complexidade do sistema no telefone, por exemplo.
 
 </details>
 
@@ -20,7 +20,7 @@ Por exemplo, a aplicação para a previsão do tempo em um telefone requer dados
 <summary> <b>Sockets</b> </summary>
 Soquetes são canais de comunicação que permitem a processos não relacionados a troca de dados localmente e através de redes. Um único soquete é um ponto final de um canal de comunicação de duas vias (“Soquetes”, [s.d.]).
 
-Um soquete de rede (ou socket) é uma interface de programação que permite a comunicação entre processos, seja no mesmo dispositivo ou em dispositivos diferentes. Essa comunicação ocorre por meio da rede, utilizando uma combinação de endereços Protocolo Internet (IP) e números de porta, como demonstrado na Figura 1 e 2. Um único soquete é um ponto final de um canal de comunicação de duas vias, e sua função principal é facilitar a troca de dados entre dois pontos (“Soquetes”, [s.d.]).
+Um soquete de rede (ou socket) é uma interface de programação que permite a comunicação entre processos, seja no mesmo dispositivo ou em dispositivos diferentes. Essa comunicação ocorre por meio da rede, utilizando uma combinação de endereços Protocolo Internet (IP) e números de porta, como demonstrado na Figura 1. Um único soquete é um ponto final de um canal de comunicação de duas vias, e sua função principal é facilitar a troca de dados entre dois pontos (“Soquetes”, [s.d.]).
 
 Para configurar um soquete, é necessário definir dois componentes principais: o domínio de comunicação (nome ou espaço de endereço) e o protocolo de transporte. Esses dois elementos determinam como os dados serão transmitidos pela rede (STEVENS et al, 2003).
 <div align="center">
@@ -30,24 +30,9 @@ Para configurar um soquete, é necessário definir dois componentes principais: 
       <p align="center"> 
 
 **Figura 1** - Exemplo de endereço IP e Porta para configuração do soquete
-
-</p>
     </figcaption>
   </figure>
 </div>
-<div align="center">
-  <figure>  
-    <img src="images/sockets_02.jpg" width="600px">
-    <figcaption>
-      <p align="center"> 
-
-**Figura 2** - Exemplo da intercomunicação entre duas vias por meio de soquetes no modelo cliente-servidor
-
-</p>
-    </figcaption>
-  </figure>
-</div>
-
 
 Domínios básicos:
 - INTERNET (AF_INET) - os endereços consistem do endereço de rede da máquina e da identificação do nº da porta, o que permite a comunicação entre processos de sistemas diferentes. O soquete pode usar endereços IPv4, permitindo a comunicação via endereços IP de 32 bits, ou IPv6 (AF_INET6), com suporte a endereços de 128 bits, projetados para resolver o problema da exaustão de endereços IPv4. 
@@ -72,6 +57,29 @@ O Docker é uma plataforma de software open source que permite a criação, o te
 
 ## Metodologia
 ### Arquitetura da Solução
+
+A solução desenvolvida utiliza o modelo de arquitetura de rede cliente-servidor. Nesta infraestrututra, a iteração é dada através envio de solicitações ou requisições pelo dito cliente que aguarda a resposta do lado denominado servidor. Desse modo, o servidor pode ser definido como um sistema computacional que armazena dados e provê serviços para serem consumidos pelos clientes, que também podem ser outros sistemas.  
+Um socket é uma abstração da camada de rede que permite a comunicação entre diferentes aplicações que precisam se comunicar via rede. Através do seu uso, é possível definir  um servidor e clientes conectados a ele para solicitar serviços. 
+
+Na solução baseada na API socket, o servidor disponibiliza um endereço IP e uma porta onde espera as conexões, os pedidos a serem processados e respondidos de acordo com os parâmetros da solicitação. Assim, os clientes conectados ao socket do servidor enviam requisições formatadas e aguardam o processamento e resposta, que será decodificada e disponibilizada ao usuário final. Tal situação é exemplificada na Figura 2. 
+
+No sistema VendePass, o servidor é responsável pelos serviços de login, listagem de rotas e compra de passagens a serem requisitados pelos clientes. Para tal, faz-se necessário também o armazenamento de dados, autenticação dos usuários, busca de rotas, codificação e decodificação de mensagens. Já o cliente, recebe as entradas do usuário, codifica a solicitação para determinado serviço a ser enviada ao servidor e, finalmente, decodifica sua resposta para o usuário.
+
+
+
+<div align="center">
+  <figure>  
+    <img src="images/sockets_02.jpg" width="600px">
+    <figcaption>
+      <p align="center"> 
+
+**Figura 2** - Exemplo da intercomunicação entre duas vias por meio de soquetes no modelo cliente-servidor
+
+</p>
+    </figcaption>
+  </figure>
+</div>
+
 ### Paradigma de Comunicação
 ### Protocolo de Comunicação
 ### Formatação e tratamento de Dados
