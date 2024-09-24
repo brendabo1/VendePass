@@ -20,9 +20,34 @@ Por exemplo, a aplicação para a previsão do tempo em um telefone requer dados
 <summary> <b>Sockets</b> </summary>
 Soquetes são canais de comunicação que permitem a processos não relacionados a troca de dados localmente e através de redes. Um único soquete é um ponto final de um canal de comunicação de duas vias (“Soquetes”, [s.d.]).
 
-Um soquete de rede (ou socket) é uma interface de programação que permite a comunicação entre processos, seja no mesmo dispositivo ou em dispositivos diferentes. Essa comunicação ocorre por meio da rede, utilizando uma combinação de endereços Protocolo Internet (IP) e números de porta. Um único soquete é um ponto final de um canal de comunicação de duas vias, e sua função principal é facilitar a troca de dados entre dois pontos (“Soquetes”, [s.d.]).
+Um soquete de rede (ou socket) é uma interface de programação que permite a comunicação entre processos, seja no mesmo dispositivo ou em dispositivos diferentes. Essa comunicação ocorre por meio da rede, utilizando uma combinação de endereços Protocolo Internet (IP) e números de porta, como demonstrado na Figura 1 e 2. Um único soquete é um ponto final de um canal de comunicação de duas vias, e sua função principal é facilitar a troca de dados entre dois pontos (“Soquetes”, [s.d.]).
 
 Para configurar um soquete, é necessário definir dois componentes principais: o domínio de comunicação (nome ou espaço de endereço) e o protocolo de transporte. Esses dois elementos determinam como os dados serão transmitidos pela rede (STEVENS et al, 2003).
+<div align="center">
+  <figure>  
+    <img src="images/Sockets-Rede.png" width="600px">
+    <figcaption>
+      <p align="center"> 
+
+**Figura 1** - Exemplo de endereço IP e Porta para configuração do soquete
+
+</p>
+    </figcaption>
+  </figure>
+</div>
+<div align="center">
+  <figure>  
+    <img src="images/sockets_02.jpg" width="600px">
+    <figcaption>
+      <p align="center"> 
+
+**Figura 2** - Exemplo da intercomunicação entre duas vias por meio de soquetes no modelo cliente-servidor
+
+</p>
+    </figcaption>
+  </figure>
+</div>
+
 
 Domínios básicos:
 - INTERNET (AF_INET) - os endereços consistem do endereço de rede da máquina e da identificação do nº da porta, o que permite a comunicação entre processos de sistemas diferentes. O soquete pode usar endereços IPv4, permitindo a comunicação via endereços IP de 32 bits, ou IPv6 (AF_INET6), com suporte a endereços de 128 bits, projetados para resolver o problema da exaustão de endereços IPv4. 
