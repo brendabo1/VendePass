@@ -6,46 +6,46 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2C",
-                        "disponível": true
+                        "avaliable": true
                     }
                 ],
                 "duracao": "1h30m",
-                "disponivel": true
+                "avaliable": true
             },
             {
                 "voo": "Voo AB456",
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": false
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "1h20m",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "LEC": [
@@ -54,23 +54,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "PAV": [
@@ -79,23 +79,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
-                        "disponível": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "GNM": [
@@ -104,23 +104,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "VDC": [
@@ -129,23 +129,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "IOS": [
@@ -154,23 +154,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ]
     },
@@ -181,27 +181,27 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2C",
-                        "disponível": true
+                        "avaliable": true
                     }
                 ],
                 "duracao": "1h30m",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "LEC": [
@@ -210,19 +210,19 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     }
                 ],
                 "duracao": "50m",
-                "disponivel": true
+                "avaliable": true
             }
         ]
     },
@@ -233,23 +233,23 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2B",
-                        "disponível": false
+                        "avaliable": true
                     }
                 ],
                 "duracao": "2h",
-                "disponivel": true
+                "avaliable": true
             }
         ],
         "FEC": [
@@ -258,19 +258,19 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "disponivel": true
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
-                        "disponivel": false
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
-                        "disponível": false
+                        "avaliable": true
                     }
                 ],
                 "duracao": "50m",
-                "disponivel": true
+                "avaliable": true
             }
         ]
     }

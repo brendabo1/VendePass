@@ -5,7 +5,8 @@ import json
 from modulos.msg_utils import enviar_mensagem, receber_mensagem
 from modulos.usuarios import autenticar_usuario
 from modulos.utils import server_login
-from modulos.rotas import listar_todas_rotas, buscar_rotas, reservar_assento
+from modulos.rotas import listar_todas_rotas, buscar_rotas2, buscar_assentos_disponiveis, tratar_reserva_assentos
+from modulos.grafo import carregar_grafo, salvar_grafo
 
 ARQUIVO_USERS= "data/usuarios.json"
 ARQUIVO_GRAFO= "data/grafo_rotas.json"
@@ -32,6 +33,7 @@ class Servidor():
                 tipo, dados = receber_mensagem(conn)
                 if not tipo:
                     print(f"Conexão com {addr} encerrada condicional de tipo.")
+                    conn.close()
                     break
 
                 if tipo == 'LOGIN':
@@ -41,7 +43,8 @@ class Servidor():
                     if not autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para listar rotas.'})
                         continue
-                    all_rotas = listar_todas_rotas(ARQUIVO_GRAFO)
+                    grafo = carregar_grafo(ARQUIVO_GRAFO)
+                    all_rotas = listar_todas_rotas(grafo)
                     enviar_mensagem(conn, 'TODAS_ROTAS_RESP', all_rotas)
                 
                 elif tipo == 'LISTA_ROTA':
@@ -50,124 +53,38 @@ class Servidor():
                         continue
                     origem = dados.get('origem')
                     destino = dados.get('destino')
-                    rotas = buscar_rotas(origem, destino, ARQUIVO_GRAFO)
-                    enviar_mensagem(conn, 'LISTA_ROTA_RESP', {'rotas': rotas})
+                    if origem and destino:
+                        grafo = carregar_grafo(ARQUIVO_GRAFO)
+                        rotas_possiveis = buscar_rotas2(origem, destino, grafo)
+                    enviar_mensagem(conn, 'LISTA_ROTA_RESP', {'rotas': rotas_possiveis})
                 
-                elif tipo == 'RESERVA':
-                    self._lock.acquire()
+                elif tipo == 'LISTA_ASS':
                     if not autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para reservar assentos.'})
                         continue
-                    origem = dados.get('origem')
-                    destino = dados.get('destino')
-                    cod_voo = dados.get('cod_voo')
-                    cod_assento = dados.get('cod_assento')
-                    resultado = reservar_assento(origem, destino, cod_voo, cod_assento, ARQUIVO_GRAFO)
-                    enviar_mensagem(conn, 'RESERVA_RESP', resultado)
-                    self._lock.release()
+                    voos_selecionados = dados.get("voos", [])
+                    grafo = carregar_grafo(ARQUIVO_GRAFO)
+                    assentos_disponiveis = buscar_assentos_disponiveis(grafo, voos_selecionados)
+                    print(assentos_disponiveis)
+                    enviar_mensagem(conn, 'LISTA_ASS_RESP', {"assentos": assentos_disponiveis})
+                elif tipo == "RESERVAR_ASSENTOS":
+                    grafo = carregar_grafo(ARQUIVO_GRAFO)
+                    print(tratar_reserva_assentos(conn, dados, grafo, ARQUIVO_GRAFO))
             
                 elif tipo == 'LOGOUT':
                     print(f"Usuário {addr} solicitou logout.")
                     enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
                     on = False
                     break
+                else:
+                    enviar_mensagem(conn, "ERRO", {"mensagem": "Tipo de requisição desconhecido."})
+
         except Exception as e:
             print(f"Erro na conexão com {addr}: {e}")
         finally:
-        # conn.close()
-        # print(f"Conexão com {addr} encerrada.")
-            pass
-        
-
-            # elif tipo == 'LIST_ROUTES':
-            #     if not autenticado:
-            #         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
-            #         continue
-            #     origem = dados.get('origem')
-            #     destino = dados.get('destino')
-            #     rotas = buscar_rotas(origem, destino)
-            #     enviar_mensagem(conn, 'LIST_ROUTES_RESP', {'rotas': rotas})
-
-            # elif tipo == 'RESERVE_SEAT':
-            #     if not autenticado:
-            #         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária.'})
-            #         continue
-            #     origem = dados.get('origem')
-            #     destino = dados.get('destino')
-            #     cod_voo = dados.get('cod_voo')
-            #     cod_assento = dados.get('cod_assento')
-            #     resultado = reservar_assento(origem, destino, cod_voo, cod_assento)
-            #     enviar_mensagem(conn, 'RESERVE_SEAT_RESP', resultado)
-
-
-        # else:
-        #     print(f"Tipo de mensagem desconhecido: {tipo}")
-        #     enviar_mensagem(conn, 'ERROR', {'mensagem': 'Tipo de mensagem desconhecido.'})
-
-        
-        # while True:
-        #     try:
-        #         data = receber_mensagem
-        #         data = conn.recv(1024).decode()
-        #         print(data)
-        #         if not data:
-        #             break
-        #         requisicao = json.loads(data)
-        #         print(requisicao)
-        #         conn.close()
-        #         print(f"Conexão encerrada com {addr}")
-
-        #         if requisicao["tipo"] == "listar_rotas":
-        #             self.enviar_rotas(conn)
-        #         elif requisicao["tipo"] == "comprar_passagem":
-        #             self.processar_compra(conn, requisicao)
-        #     except OSError as e:
-        #         print("erro na conexão ", addr, e.args)
-        #         return
-        #     except Exception as e:
-        #         print(f"Erro nos dados recebidos do cliente: {addr}, {e.args}")
-        #         conn.send(bytes("erro"))
-        #         break
-        # conn.close()
-        # print(f"Conexão encerrada com {addr}")
-
-    def reservar_assento(self, assento):
-        # self._lock.acquire()
-        # self._lock.release()
-        pass
-
-
-    
-    def processar_compra(self, conn, requisicao):
-        origem = requisicao["origem"]
-        destino = requisicao["destino"]
-
-        rota = self.encontrar_rota(origem, destino)
-        if rota and rota.disponivel:
-            resposta = {
-                "status": "sucesso",
-                "mensagem": "Rota encontrada, escolha um assento",
-                "assentos_disponiveis": rota.assentos
-            }
-            conn.sendall(json.dumps(resposta).encode())
-
-            data = conn.recv(1024).decode()
-            requisicao_assento = json.loads(data)
-            assento_escolhido = requisicao_assento["assento"]
-
-            if rota.reservar_assento(assento_escolhido):
-                resposta_final = {
-                    "status": "sucesso",
-                    "mensagem": f"Compra realizada com sucesso! Assento {assento_escolhido} reservado.",
-                    "preco": rota.preco
-                }
-            else:
-                resposta_final = {"status": "falha", "mensagem": "Assento indisponível."}
+            conn.close()
+            print(f"Conexão com {addr} encerrada.")
             
-            conn.sendall(json.dumps(resposta_final).encode())
-        else:
-            resposta = {"status": "falha", "mensagem": "Rota indisponível ou inexistente"}
-            conn.sendall(json.dumps(resposta).encode())
 
     def fechar_conexao_servidor(self):
         self._tcp.close()

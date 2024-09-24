@@ -1,14 +1,14 @@
 import json
-from pathlib import Path
 import threading
-import logging
+
+lock = threading.RLock()
 
 ARQUIVO_GRAFO= "data/grafo_rotas.json"
 
 # Bloqueio para sincronização de acesso aos arquivos JSON
 lock = threading.Lock()
 
-def salvar_grafo(rotas, arquivo):
+def salvar_grafo_old(rotas, arquivo):
     """
     Salva o grafo de rotas em um arquivo JSON.
     
@@ -28,6 +28,18 @@ def salvar_grafo(rotas, arquivo):
     except Exception as e:
         print(f"Erro ao salvar o grafo: {e}")
 
+
+def salvar_grafo(rotas, arquivo):
+    """
+    Salva o grafo de rotas em um arquivo JSON.
+    
+    Parâmetros:
+    - rotas (dict): O grafo de rotas a ser salvo.
+    """
+    with lock:  # Garantir que apenas um thread escreva no arquivo por vez
+        with open(arquivo, 'w') as f:
+            json.dump(rotas, f, indent=4)
+
 def carregar_grafo(arquivo):
     """
     Carrega o grafo de rotas a partir de um arquivo JSON.
@@ -39,19 +51,13 @@ def carregar_grafo(arquivo):
     - dict: Grafo de rotas carregado.
     - None: Se ocorrer um erro.
     """
-    # caminho_grafo = Path(__file__).parent.parent / arquivo
-    # if not caminho_grafo.exists():
-    #     logging.error(f"Arquivo '{caminho_grafo}' não encontrado.")
-    #     return {}
-    try:
-        with lock:
-            with open(arquivo, 'w', encoding='utf-8') as g:
-                rotas = json.load(g)
-        #logging.debug(f"Grafo carregado com sucesso a partir de '{caminho_grafo}'.")
-        return rotas
-    except json.JSONDecodeError:
-        logging.error(f"Erro ao decodificar o arquivo.")
-        return {}
-    except Exception as e:
-        logging.error(f"Erro ao carregar o grafo: {e}")
-        return {}
+    with lock:  # Garantir que apenas um thread carregue o grafo por vez
+        try:
+            with open(arquivo, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print("Arquivo de rotas não encontrado.")
+            return {}
+        except json.JSONDecodeError:
+            print("Erro ao carregar o grafo de rotas (arquivo corrompido ou inválido).")
+            return {}

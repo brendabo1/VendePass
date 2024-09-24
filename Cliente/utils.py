@@ -193,7 +193,7 @@ def reservar_assento(sock, origem, destino, rota):
         for assento in voo['assentos']:
             # Verificar se o assento é um dicionário
             if isinstance(assento, dict):
-                if assento.get('disponivel'):  # Verifica se a chave 'disponivel' existe e é True
+                if assento.get('avaliable'):  # Verifica se a chave 'disponivel' existe e é True
                     print(assento['cod'])
     # for idx, voo in enumerate(voos, 1):
     #     print(f"{idx}. {voo['voo']} - Duração: {voo['duracao']}")
@@ -281,3 +281,147 @@ def menu():
         
     print("FIM DO PROGRAMA")
 
+
+def buscar_rotas_cliente(sock):
+    """
+    Função no lado do cliente que solicita ao servidor as rotas possíveis entre a origem e o destino.
+
+    Parâmetros:
+    - sock (socket.socket): O socket TCP conectado ao servidor.
+    - origem (str): Código do aeroporto de origem.
+    - destino (str): Código do aeroporto de destino.
+
+    Retorna:
+    - None: Apenas exibe as rotas recebidas.
+    """
+    legenda_aeroportos()
+    print('=' * 44 + " Listar Rotas" + '=' * 44 +"\n\n")
+    invalido = True
+    while invalido:
+        print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
+        origem = input("Digite o código do aeroporto de origem (3 letras maiúsculas): ").strip().upper()
+        if not validar_codigo_aeroporto(origem):
+            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
+            continue
+        destino = input("Digite o código do aeroporto de destino (3 letras maiúsculas): ").strip().upper()
+        if not validar_codigo_aeroporto(destino):
+            print("Código de aeroporto inválido. Deve conter 3 letras maiúsculas.\n")
+            continue
+        if origem == 'x' or destino == 'x':
+            return None
+        invalido = False
+        break
+
+    # Enviar a solicitação de busca de rotas para o servidor
+    enviar_mensagem(sock, "LISTA_ROTA", {"origem": origem, "destino": destino})
+
+    # Aguardar a resposta do servidor
+    tipo, resposta = receber_mensagem(sock)
+
+    if tipo == "LISTA_ROTA_RESP":
+        rotas = resposta.get("rotas", [])
+        
+        if not rotas:
+            print(f"Nenhuma rota encontrada de {origem} para {destino}.")
+            return
+
+        print(f"Rotas disponíveis de {origem} para {destino}:\n")
+        
+        # Listar todas as rotas encontradas
+        for idx, rota in enumerate(rotas, 1):
+            print(f"Rota {idx}:")
+            aeroportos = [origem]  # A lista de aeroportos da rota começa pela origem
+            for trecho in rota:
+                aeroportos.append(trecho['next_dest'])
+                print(f"    - {trecho['voo']}, Duração: {trecho['duracao']}")
+
+            print(f"  Itinerário: {' -> '.join(aeroportos)}\n")
+
+        # Opcional: Permitir ao usuário escolher uma rota para continuar com o processo
+        on = True
+        while on:
+            try:
+                escolha = int(input(f"Escolha uma rota (1-{len(rotas)}) ou {len(rotas) + 1} para Cancelar: "))
+                if 1 <= escolha <= len(rotas):
+                    rota_escolhida = rotas[escolha - 1]
+                    voos_selecionados = []
+                    current_origem = origem
+                    for trecho in rota_escolhida:
+                        voo_info = {
+                            'voo': trecho['voo'],
+                            'duracao': trecho['duracao'],
+                            'origem': current_origem,  # Adiciona a origem atual ao trecho
+                            'next_dest': trecho['next_dest']
+                        }
+                        voos_selecionados.append(voo_info)
+                        current_origem = trecho['next_dest']  # Atualiza a origem para o próximo trecho
+                    
+
+                    print(f"\nVocê escolheu a Rota {escolha}:")
+                    for trecho in rota_escolhida:
+                        print(f"    - {trecho['voo']}, Duração: {trecho['duracao']}")
+                    print("")
+                    print(voos_selecionados)
+                    return voos_selecionados
+                elif escolha == len(rotas) + 1:
+                    print("Cancelando a escolha de rota...")
+                    break
+                else:
+                    print(f"Por favor, insira um número entre 1 e {len(rotas) + 1}.")
+            except ValueError:
+                print("Entrada inválida. Por favor, insira um número válido.")
+    else:
+        print("Erro: Resposta inesperada do servidor.")
+        return None
+
+def reservar_assentos_cliente(sock, voos_selecionados):
+    """
+    Função no lado do cliente para visualizar os assentos disponíveis para cada voo e permitir a reserva.
+
+    Parâmetros:
+    - sock (socket.socket): O socket TCP conectado ao servidor.
+    - voos_selecionados (list): Lista de voos da rota selecionada pelo usuário.
+    """
+    # Enviar a solicitação para obter os assentos disponíveis
+    enviar_mensagem(sock, "LISTA_ASS", {"voos": voos_selecionados})
+
+    # Receber a resposta com os assentos disponíveis
+    tipo, resposta = receber_mensagem(sock)
+
+    if tipo == "LISTA_ASS_RESP":
+        assentos_disponiveis = resposta.get("assentos", {})
+        assentos_escolhidos = {}
+
+        # Mostrar assentos disponíveis para cada voo e permitir escolha
+        for trecho in voos_selecionados:
+            voo = trecho['voo']
+            origem = trecho['origem']
+            destino = trecho['next_dest']
+            assentos = assentos_disponiveis.get(voo, [])
+
+            if assentos:
+                print(f"\nAssentos disponíveis para o {voo} de {origem} para {destino}: {', '.join(assentos)}")
+                while True:
+                    assento_escolhido = input(f"Escolha um assento para o voo {voo} (ou 'cancelar' para desistir): ")
+                    if assento_escolhido in assentos:
+                        assentos_escolhidos[voo] = assento_escolhido
+                        break
+                    elif assento_escolhido.lower() == 'cancelar':
+                        print("Cancelando a escolha de assentos...")
+                        return
+                    else:
+                        print("Assento inválido. Por favor, escolha novamente.")
+
+        # Confirmar reserva dos assentos
+        enviar_mensagem(sock, "RESERVAR_ASSENTOS", {"voos": voos_selecionados, "assentos": assentos_escolhidos})
+
+        # Receber a confirmação da reserva
+        tipo, resposta = receber_mensagem(sock)
+
+        if tipo == "RESERVA_CONFIRMADA":
+            print(resposta["mensagem"])
+        elif tipo == "RESERVA_ERRO":
+            print(resposta["mensagem"])
+
+    else:
+        print("Erro ao receber a lista de assentos disponíveis.")

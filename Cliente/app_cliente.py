@@ -1,6 +1,6 @@
 import socket
 import json
-from utils import login, exibe_todas_rotas, listar_rota, reservar_assento
+from utils import login, exibe_todas_rotas, listar_rota, buscar_rotas_cliente, reservar_assentos_cliente
 from msg_utils import enviar_mensagem, receber_mensagem
 
 class Cliente:
@@ -24,11 +24,10 @@ class Cliente:
                 all_rotas = exibe_todas_rotas(self.__client_socket)
 
             elif menuOption == "2":
-                rota_escolhida = listar_rota(self.__client_socket)
-                if rota_escolhida:
-                    origem = rota_escolhida['itinerario'][0]
-                    destino = rota_escolhida['itinerario'][-1]
-                    reservar_assento(self.__client_socket, origem, destino, rota_escolhida)
+                voos_selecionados =  buscar_rotas_cliente(self.__client_socket) 
+                if voos_selecionados:
+                    reservar_assentos_cliente(self.__client_socket, voos_selecionados)
+                    
                 
             elif menuOption == "3":
                 print("Saindo...")
