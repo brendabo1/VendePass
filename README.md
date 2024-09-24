@@ -59,6 +59,8 @@ O Docker é uma plataforma de software open source que permite a criação, o te
 ## Metodologia
 Para solucionar o problema proposto, as temáticas de sistemas distribuídos com uso de API socket e protocolo TCP/IP foram discutidas e diferentes abordagens analisadas. Para tal execução, a linguagem de programação Pyhton foi escolhida implementando a interface nativa do socket.
 
+## Resultados e Discussões
+
 ### Arquitetura da Solução
 
 A solução desenvolvida utiliza o modelo de arquitetura de rede cliente-servidor. Nesta infraestrututra, a iteração é dada através envio de solicitações ou requisições pelo dito cliente que aguarda a resposta do lado denominado servidor. Desse modo, o servidor pode ser definido como um sistema computacional que armazena dados e provê serviços para serem consumidos pelos clientes, que também podem ser outros sistemas.  
@@ -131,7 +133,6 @@ Para garantir a confiabilidade do sistema, o tratamento de exceções foi implem
 ### Docker
 O uso da plataforma Docker otimiza a execução do sistema ao dispensar a configuração de cada máquina física. Através de dois containers, sendo um para o servidor e um para o cliente, a aplicação pode ser executa em diferentes máquinas com a plataforma Docker.
 
-## Resultados e Discussões
 ### Desempenho e Avaliação
 Para avaliação e comparação do desempenho do sistema, scripts para a simulação de 5, 10 e 20 usuários conectados simultaneamente foram executados. Comparando-se a performance da execução sequencial e multithread, em todos os cenários avaliados a execução multithread atendeu aos clientes em menor tempo.
 ## Conclusão
