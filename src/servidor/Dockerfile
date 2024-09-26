@@ -2,7 +2,8 @@ FROM python:3.12
 
 WORKDIR /servidor-socket
 
-COPY . .
+COPY ./api /servidor-socket
+
 
 EXPOSE 12345
 
