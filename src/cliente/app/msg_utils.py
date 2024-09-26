@@ -1,39 +1,3 @@
-# import json
-# import socket
-
-# def enviar_mensagem(sock, tipo, dados):
-#     """
-#     Envia uma mensagem JSON para o servidor, terminando com um delimitador de nova linha.
-
-#     Parâmetros:
-#     - sock (socket.socket): O socket TCP conectado ao servidor.
-#     - tipo (str): Tipo da mensagem (e.g., 'LOGIN', 'LIST_ROUTES').
-#     - dados (dict): Dados associados à mensagem.
-
-#     Retorna:
-#     - None
-#     """
-#     mensagem = json.dumps({'tipo': tipo, 'dados': dados}) 
-#     #+ '\n'
-#     try:
-#         sock.sendall(mensagem.encode('utf-8'))
-#     except socket.error as e:
-#         print(f"Erro ao enviar mensagem: {e}")
-
-
-# def receber_mensagem(socket):
-#     """
-#     Recebe uma mensagem do cliente e retorna o tipo e os dados.
-#     """
-#     try:
-#         mensagem = socket.recv(1024).decode()
-#         if not mensagem:
-#             return None, None
-#         dados = json.loads(mensagem)
-#         return dados.get('tipo'), dados.get('dados')
-#     except json.JSONDecodeError:
-#         print("Erro ao decodificar a mensagem recebida.")
-#         return None, None
     
 import json
 import socket

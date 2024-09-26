@@ -1,7 +1,7 @@
 import socket
 import os
 from utils import login, exibe_todas_rotas, buscar_rotas_cliente, reservar_assentos_cliente, exibir_pedidos
-from msg_utils import enviar_mensagem, receber_mensagem
+from msg_utils import enviar_mensagem
 
 class Cliente:
     def __init__(self, host, port=12345):

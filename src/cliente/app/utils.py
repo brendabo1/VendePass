@@ -28,20 +28,6 @@ def login(socket):
 
         
 
-# def autentica(socket, user, senha):  
-#     enviar_mensagem(socket, 'LOGIN', {'id': user, 'senha': senha})
-#     # Recebe a resposta do servidor
-#     tipo, dados = receber_mensagem(socket)
-#     if tipo == 'LOGIN_RESPOSTA':
-#         if dados.get('sucesso'):
-#             print("Login bem-sucedido.\n")
-#             pausa(1)
-#             return True   
-#         else:
-#             print("ID e senha incorretos. Tente novamente\n")
-#             pausa()
-#             return False
-
 def autenticar(sock, user_id, senha):
     """
     Função para fazer login e capturar o ID do usuário.
