@@ -1,79 +1,11 @@
 # encoding: utf-8
-import json
 import threading
 from modulos.msg_utils import enviar_mensagem
-
+from modulos.grafo import salvar_grafo, carregar_grafo
+from modulos.usuarios import carregar_usuarios, anexar_pedido_usuario
 
 lock = threading.RLock()
 
-def salvar_grafo_old(grafo, arquivo):
-    """
-    Salva o grafo de rotas em um arquivo JSON.
-    
-    Parâmetros:
-    - grafo (dict): Estrutura do grafo de rotas com voos e assentos.
-    - arquivo (str): Nome do arquivo JSON onde o grafo será salvo. Padrão: 'rotas3.json'.
-    
-    Retorna:
-    - None
-    """
-    try:
-        with open(arquivo, 'w', encoding='utf-8') as f:
-            json.dump(grafo, f, ensure_ascii=False, indent=4)
-        print(f"Grafo salvo com sucesso em '{arquivo}'.")
-    except Exception as e:
-        print(f"Erro ao salvar o grafo em '{arquivo}': {e}")
-
-def carregar_grafo_old(arquivo):
-    """
-    Carrega o grafo de rotas a partir de um arquivo JSON.
-    
-    Parâmetros:
-    - arquivo (str): Nome do arquivo JSON de onde o grafo será carregado. Padrão: 'rotas3.json'.
-    
-    Retorna:
-    - dict: Estrutura do grafo de rotas carregada.
-    - None: Se ocorrer um erro ou o arquivo não existir.
-    """
-    
-    try:
-        with open(arquivo, 'r', encoding='utf-8') as f:
-            rotas = json.load(f)
-        print(f"Grafo carregado com sucesso a partir de '{arquivo}'.")
-        return rotas
-    except Exception as e:
-        print(f"Erro ao carregar o grafo de '{arquivo}': {e}")
-        return None
-
-def carregar_grafo_lock(arquivo):
-    """
-    Carrega o grafo de rotas a partir de um arquivo JSON.
-    
-    Retorna:
-    - dict: O grafo de rotas carregado do arquivo.
-    """
-    with lock:  # Garantir que apenas um thread carregue o grafo por vez
-        try:
-            with open(arquivo, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            print("Arquivo de rotas não encontrado.")
-            return {}
-        except json.JSONDecodeError:
-            print("Erro ao carregar o grafo de rotas (arquivo corrompido ou inválido).")
-            return {}
-
-
-def salvar_grafo_lock(rotas, arquivo):
-    """
-    Salva o grafo de rotas em um arquivo JSON.
-    
-    Parâmetros:
-    - rotas (dict): O grafo de rotas a ser salvo.
-    """
-    with lock:  # Garantir que apenas um thread escreva no arquivo por vez
-        with open(arquivo, 'w') as f:
-            json.dump(rotas, f, indent=4)
 
 def listar_todas_rotas(grafo):
     """
@@ -96,6 +28,30 @@ def listar_todas_rotas(grafo):
                 }
                 rotas_encontradas.append(rota)
     return rotas_encontradas
+
+
+def atualizar_disponibilidade_voo(rotas, origem, destino, voo_selecionado):
+    """
+    Atualiza a disponibilidade de um voo com base na disponibilidade dos assentos.
+    
+    Se todos os assentos estiverem ocupados (avaliable = False), o voo será marcado como indisponível.
+    Caso haja ao menos um assento disponível, o voo será marcado como disponível.
+
+    Parâmetros:
+    - rotas (dict): Dicionário contendo as rotas e voos disponíveis.
+    - origem (str): Cidade de origem do voo.
+    - destino (str): Cidade de destino do voo.
+    - voo_selecionado (str): Identificação do voo a ser atualizado.
+    """
+    if origem in rotas and destino in rotas[origem]:
+        for voo in rotas[origem][destino]:
+            if voo['voo'] == voo_selecionado:
+                # Verifica se há ao menos um assento disponível
+                voo_disponivel = any(assento['avaliable'] for assento in voo['assentos'])
+                
+                # Atualiza o status do voo com base na disponibilidade dos assentos
+                voo['avaliable'] = voo_disponivel
+                break
 
 def buscar_rotas_possiveis(rotas, origem, destino):
     """
@@ -204,17 +160,6 @@ def buscar_rotas_possiveis(rotas, origem, destino):
     return rota_escolhida
 
 
-def checa_disponibilidade_voo(origem, destino, cod_voo, arquivo_grafo):
-    rotas = carregar_grafo_lock(arquivo_grafo)
-    
-    for voo in rotas[origem][destino]:
-        if voo['voo'] == cod_voo:
-            for assento in voo['assentos']:
-                if not assento['avaliable']:
-                    # Voo esgotado
-                    return False
-                continue
-    return True
 
 def buscar_rotas2(origem, destino, rotas):
     """
@@ -273,20 +218,23 @@ def buscar_rotas2(origem, destino, rotas):
     return caminhos
 
 
-def tratar_reserva_assentos(sock, dados, rotas, arquivo):
+def tratar_reserva_assentos(sock, dados, rotas, user_id, arquivo_rotas, arquivo_usuarios):
     """
-    Trata a solicitação de reserva de assentos.
+    Trata a solicitação de reserva de assentos e anexa o pedido ao usuário.
 
     Parâmetros:
     - sock (socket.socket): O socket TCP conectado ao cliente.
     - dados (dict): Dados da mensagem recebida com voos selecionados e assentos escolhidos.
+    - rotas (dict): Grafo das rotas e voos disponíveis.
+    - arquivo_rotas (str): Caminho do arquivo que contém o grafo de rotas.
+    - arquivo_usuarios (str): Caminho do arquivo que contém os dados dos usuários.
     """
     voos_selecionados = dados.get("voos", [])
     assentos_escolhidos = dados.get("assentos", {})
 
     with lock:  # Bloqueia para garantir que as operações de leitura/escrita sejam seguras
-        #rotas = carregar_grafo_lock(arquivo)
         sucesso = True
+        pedidos_usuario = []
 
         for trecho in voos_selecionados:
             voo_selecionado = trecho['voo']
@@ -300,22 +248,44 @@ def tratar_reserva_assentos(sock, dados, rotas, arquivo):
                         for assento in voo['assentos']:
                             if assento['cod'] == assento_escolhido and assento['avaliable']:
                                 assento['avaliable'] = False  # Reserva o assento
+                                # Cria o pedido para o trecho
+                                pedido_trecho = {
+                                    'origem': origem,
+                                    'destino': destino,
+                                    'voo': voo_selecionado,
+                                    'assento': assento_escolhido
+                                }
+                                
+                                pedidos_usuario.append(pedido_trecho)
                                 break
                         else:
                             sucesso = False
-                        break
+                            break
+                
+                # Após a reserva, atualiza a disponibilidade do voo
+                atualizar_disponibilidade_voo(rotas, origem, destino, voo_selecionado)
 
         # Salvar o grafo atualizado após a alteração dos assentos
-        salvar_grafo_lock(rotas, arquivo)
+        salvar_grafo(rotas, arquivo_rotas)
+
+        if sucesso:   
+            #atualizar_disponibilidade_voo(origem, destino, voo_selecionado, arquivo_rotas)
+            # Carregar usuários e anexar o pedido ao usuário
+            pedido_completo = {
+                'voos': pedidos_usuario
+            }
+            anexar_pedido_usuario(user_id, pedido_completo, arquivo_usuarios)
+
+
 
     # Envia uma mensagem de confirmação ou erro ao cliente
     if sucesso:
         enviar_mensagem(sock, "RESERVA_CONFIRMADA", {"mensagem": "Reserva realizada com sucesso!"})
     else:
-        enviar_mensagem(sock, "RESERVA_ERRO", {"mensagem": "Erro ao reservar os assentos."})
+        enviar_mensagem(sock, "RESERVA_ERRO", {"mensagem": "Não foi possível reservar estes assentos. Tente novamente."})
 
 
-def buscar_assentos_disponiveis(rotas, voos_selecionados):
+def buscar_assentos_disponiveis(rotas, voos_selecionados, arquivo_grafo):
     """
     Busca os assentos disponíveis para cada voo em uma rota selecionada.
 
@@ -328,21 +298,22 @@ def buscar_assentos_disponiveis(rotas, voos_selecionados):
     """
     assentos_disponiveis = {}
 
-    print(f"Voos selecionados recebidos: {voos_selecionados}")
     for trecho in voos_selecionados:
         voo_selecionado = trecho['voo']
         origem = trecho['origem']
         destino = trecho['next_dest']
-        print(f"Verificando voo {voo_selecionado} de {origem} para {destino}")
+        # print(f"Verificando voo {voo_selecionado} de {origem} para {destino}")
 
         if origem in rotas and destino in rotas[origem]:
             for voo in rotas[origem][destino]:
                 if voo['voo'] == voo_selecionado:
+                    # if checa_disponibilidade_voo(origem, destino, voo['voo'], rotas, arquivo_grafo):
                     assentos = [assento['cod'] for assento in voo['assentos'] if assento['avaliable']]
                     assentos_disponiveis[voo_selecionado] = assentos
                     break
+                else:
+                    return None
         else:
-            print(f"Rota de {origem} para {destino} não encontrada.")
             return None
 
     return assentos_disponiveis

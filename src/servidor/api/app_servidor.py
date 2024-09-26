@@ -3,7 +3,7 @@ import threading
 import json
 #from modulos.rotas import gerar_caminhos, listar_caminhos_disponiveis
 from modulos.msg_utils import enviar_mensagem, receber_mensagem
-from modulos.usuarios import autenticar_usuario, inicializa_usuarios
+from modulos.usuarios import pedidos_usuario, inicializa_usuarios, autenticar_usuario
 from modulos.utils import server_login
 from modulos.rotas import listar_todas_rotas, buscar_rotas2, buscar_assentos_disponiveis, tratar_reserva_assentos
 from modulos.grafo import carregar_grafo
@@ -25,9 +25,9 @@ class Servidor():
 
 
     def handle_client(self, conn, addr):
-        print("Nova conexao funcao handle: ", addr)
+        print("Nova conexao: ", addr)
         on = True
-        autenticado = False
+        usuario_autenticado = False
         try:
             inicializa_usuarios(ARQUIVO_USERS)
             while on:
@@ -38,10 +38,10 @@ class Servidor():
                     break
 
                 if tipo == 'LOGIN':
-                    autenticado = server_login(conn, dados, ARQUIVO_USERS)
+                    usuario_autenticado = autenticar_usuario(conn, dados, ARQUIVO_USERS)
                 
                 elif tipo == 'LISTAR_TODAS_ROTAS':
-                    if not autenticado:
+                    if not usuario_autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para listar rotas.'})
                         continue
                     grafo = carregar_grafo(ARQUIVO_GRAFO)
@@ -49,7 +49,7 @@ class Servidor():
                     enviar_mensagem(conn, 'TODAS_ROTAS_RESP', all_rotas)
                 
                 elif tipo == 'LISTA_ROTA':
-                    if not autenticado:
+                    if not usuario_autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para listar rotas.'})
                         continue
                     origem = dados.get('origem')
@@ -60,18 +60,20 @@ class Servidor():
                     enviar_mensagem(conn, 'LISTA_ROTA_RESP', {'rotas': rotas_possiveis})
                 
                 elif tipo == 'LISTA_ASS':
-                    if not autenticado:
+                    if not usuario_autenticado:
                         enviar_mensagem(conn, 'ERROR', {'mensagem': 'Autenticação necessária para reservar assentos.'})
                         continue
                     voos_selecionados = dados.get("voos", [])
                     grafo = carregar_grafo(ARQUIVO_GRAFO)
-                    assentos_disponiveis = buscar_assentos_disponiveis(grafo, voos_selecionados)
-                    print(assentos_disponiveis)
+                    assentos_disponiveis = buscar_assentos_disponiveis(grafo, voos_selecionados, ARQUIVO_GRAFO)
                     enviar_mensagem(conn, 'LISTA_ASS_RESP', {"assentos": assentos_disponiveis})
                 elif tipo == "RESERVAR_ASSENTOS":
                     grafo = carregar_grafo(ARQUIVO_GRAFO)
-                    print(tratar_reserva_assentos(conn, dados, grafo, ARQUIVO_GRAFO))
-            
+                    tratar_reserva_assentos(conn, dados, grafo, usuario_autenticado, ARQUIVO_GRAFO, ARQUIVO_USERS)
+
+                elif tipo == "PEDIDOS":
+                    pedidos_usuario(conn, usuario_autenticado, ARQUIVO_USERS)
+
                 elif tipo == 'LOGOUT':
                     print(f"Usuário {addr} solicitou logout.")
                     enviar_mensagem(conn, 'LOGOUT_RESP', {'sucesso': True})
@@ -83,6 +85,9 @@ class Servidor():
             print(f"Erro na conexão com {addr}: {e}")
         except Exception as e:
             print(f"Erro na conexão com {addr}: {e}")
+        except KeyboardInterrupt:
+            print("Servidor desligando...")
+            self.fechar_conexao_servidor()
         finally:
             conn.close()
             print(f"Conexão com {addr} encerrada.")
@@ -99,7 +104,7 @@ class Servidor():
         self._tcp.listen()
         while True:
             try:
-                print("O servidor foi iniciado em ", self._host, self._port)
+                print(f"O servidor foi iniciado em {self._host}: {self._port}")
                 connection, client = self._tcp.accept()  #aguarda a conexao do cliente
                 self._threadPool[client] =  threading.Thread(target=self.handle_client, args=(connection,client))
                 self._threadPool[client].start()
@@ -113,7 +118,8 @@ class Servidor():
             
     
 if __name__ == "__main__":
-    host = '127.0.0.1'  # Localhost
+    # host = '127.0.0.1'  # Localhost
+    host = socket.gethostbyname(socket.gethostname())
     port = 12345        # Porta de conexão
     servidor = Servidor(host, port)
     servidor.start()

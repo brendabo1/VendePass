@@ -10,7 +10,7 @@
                     },
                     {
                         "cod": "1B",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
@@ -18,11 +18,11 @@
                     },
                     {
                         "cod": "2B",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "2C",
-                        "avaliable": true
+                        "avaliable": false
                     }
                 ],
                 "duracao": "40m",
@@ -33,7 +33,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "1B",
@@ -58,7 +58,7 @@
                     },
                     {
                         "cod": "1B",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
@@ -66,7 +66,7 @@
                     },
                     {
                         "cod": "2B",
-                        "avaliable": false
+                        "avaliable": true
                     }
                 ],
                 "duracao": "1h25m",
@@ -154,7 +154,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
@@ -166,7 +166,7 @@
                     },
                     {
                         "cod": "2B",
-                        "avaliable": false
+                        "avaliable": true
                     }
                 ],
                 "duracao": "2h",
@@ -181,7 +181,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
@@ -189,7 +189,7 @@
                     },
                     {
                         "cod": "2A",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "2B",
@@ -214,14 +214,39 @@
                     },
                     {
                         "cod": "1B",
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2A",
+                        "avaliable": true
+                    }
+                ],
+                "duracao": "25m",
+                "avaliable": true
+            }
+        ],
+        "BPS": [
+            {
+                "voo": "Voo AB529",
+                "assentos": [
+                    {
+                        "cod": "1A",
+                        "avaliable": false
+                    },
+                    {
+                        "cod": "1B",
                         "avaliable": false
                     },
                     {
                         "cod": "2A",
-                        "avaliable": false
+                        "avaliable": true
+                    },
+                    {
+                        "cod": "2B",
+                        "avaliable": true
                     }
                 ],
-                "duracao": "25m",
+                "duracao": "2h",
                 "avaliable": true
             }
         ],
@@ -243,7 +268,7 @@
                     },
                     {
                         "cod": "2B",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "2C",
@@ -291,11 +316,11 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
@@ -316,11 +341,11 @@
                     },
                     {
                         "cod": "1B",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "2A",
-                        "avaliable": true
+                        "avaliable": false
                     }
                 ],
                 "duracao": "25m",
@@ -360,7 +385,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
@@ -387,7 +412,7 @@
                     },
                     {
                         "cod": "1B",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "2A",
@@ -408,7 +433,7 @@
                 "assentos": [
                     {
                         "cod": "1A",
-                        "avaliable": true
+                        "avaliable": false
                     },
                     {
                         "cod": "1B",
@@ -420,11 +445,11 @@
                     },
                     {
                         "cod": "2B",
-                        "avaliable": false
+                        "avaliable": true
                     },
                     {
                         "cod": "1C",
-                        "avaliable": true
+                        "avaliable": false
                     }
                 ],
                 "duracao": "2h15m",

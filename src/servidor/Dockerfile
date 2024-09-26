@@ -1,11 +1,8 @@
-FROM python:3.9-slim
+FROM python:3.12
 
-WORKDIR /app
-
+WORKDIR /servidor-socket
 
 COPY . .
-
-RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 12345
 

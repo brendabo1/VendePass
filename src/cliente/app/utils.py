@@ -1,12 +1,19 @@
-import json
+import os
 from msg_utils import enviar_mensagem, receber_mensagem
 import re
+import time
+
+
+def pausa(segundos=1):
+    time.sleep(segundos)
 
 def login(socket):
     valido = False
-    print('=' * 22 +  "LOGIN " + '=' * 22 +"\n\n" )
-    print("\033[31m" +"Para Sair ID: 'x'" +"\033[0m")
-    while not valido: 
+    while not valido:
+        os.system('cls')
+        print('=' * 22 +  "LOGIN " + '=' * 22 +"\n\n" )
+        print("\033[31m" +"Para Sair ID: 'x'" +"\033[0m")
+     
         user_id = input("ID: ")
         if user_id == 'x' or user_id == 'X':
             enviar_mensagem(socket, 'LOGOUT', None)
@@ -14,25 +21,56 @@ def login(socket):
         senha = input("Senha: ")
         if not user_id or not senha:
             print("Usuário e senha não podem estar vazios.") 
-        else: 
-            valido = autentica(socket, user_id, senha)  
-        
-    return valido
+            pausa()
+            continue
+        elif autenticar(socket, user_id, senha):  
+            return True
 
-def autentica(socket, user, senha):  
-    enviar_mensagem(socket, 'LOGIN', {'id': user, 'senha': senha})
+        
+
+# def autentica(socket, user, senha):  
+#     enviar_mensagem(socket, 'LOGIN', {'id': user, 'senha': senha})
+#     # Recebe a resposta do servidor
+#     tipo, dados = receber_mensagem(socket)
+#     if tipo == 'LOGIN_RESPOSTA':
+#         if dados.get('sucesso'):
+#             print("Login bem-sucedido.\n")
+#             pausa(1)
+#             return True   
+#         else:
+#             print("ID e senha incorretos. Tente novamente\n")
+#             pausa()
+#             return False
+
+def autenticar(sock, user_id, senha):
+    """
+    Função para fazer login e capturar o ID do usuário.
+    
+    Parâmetros:
+    - sock (socket.socket): O socket TCP conectado ao servidor.
+    - user_id (str): id do usuário.
+    - senha (str): A senha do usuário.
+    
+    Retorna:
+    - str: O ID do usuário se o login for bem-sucedido.
+    """
+    # Envia a mensagem de login para o servidor
+    enviar_mensagem(sock, 'LOGIN', {'id': user_id, 'senha': senha})
+
     # Recebe a resposta do servidor
-    tipo, dados = receber_mensagem(socket)
-    if tipo == 'LOGIN_RESPOSTA':
-        if dados.get('sucesso'):
-            print("Login bem-sucedido.\n")
-            return True   
-        else:
-            print("ID e senha incorretos\n")
-            return False
+    tipo, dados = receber_mensagem(sock)
+
+    if tipo == 'LOGIN_SUCESSO':
+        print(f"Login realizado com sucesso! ID do usuário: {dados['id']}")
+        pausa()
+        return dados['id']  # Retorna o ID do usuário
+    else:
+        print(f"Erro no login: {dados['mensagem']}")
+        pausa()
+        return None
 
 def legenda_aeroportos():
-    print("                 Legenda AEROPORTOS\n"
+    print("\n                 Legenda AEROPORTOS\n"
         "(SSA) Salvador - Aeroporto Deputado Luís Eduardo Magalhães\n" + 
         "(IOS) Ilhéus - Aeroporto de Ilhéus - Jorge Amado\n" +
         "(BPS) Porto Seguro - Aeroporto de Porto Seguro\n" +
@@ -45,16 +83,30 @@ def legenda_aeroportos():
         "(TXF) Teixeira de Freitas - Aeroporto de Teixeira de Freitas\n" +
         "(VDC) Vitória da Conquista - Aeroporto Glauber de Andrade Rocha\n")
 
+def voltar_menu():
+    sair = False
+    while not sair:
+        op = input("Para voltar ao Menu, insira 'sair': ")
+        if op == 'sair' or op == 'Sair':
+            sair = True
+            return True
+        else: 
+            print("Opção inválida\n")
+            continue
+
 def exibe_todas_rotas(socket):
     enviar_mensagem(socket, "LISTAR_TODAS_ROTAS", None)
     tipo, dados = receber_mensagem(socket)
     
     if tipo == 'TODAS_ROTAS_RESP':
+        os.system('cls')
+
         if not dados:
             print(f"Nenhuma rota encontrada.\n")
-            return None
+            if voltar_menu():
+                return None
         
-        print('=' * 44 + " ROTAS " + '=' * 44 +"\n\n")
+        print('=' * 22 + " ROTAS " + '=' * 22 +"\n\n")
         print(f"{'Origem':<10} {'Destino':<10} {'Voo':<15} {'Duração':<10}")
         print('-' * 44)
         for rota in dados:
@@ -63,12 +115,14 @@ def exibe_todas_rotas(socket):
             voo_str = str(rota['voo'])
             duracao_str = str(rota['duracao'])
             print(f"{origem_str:<10} {destino_str:<10} {voo_str:<15} {duracao_str:<10}")
-        #print('-' * 44)
+        print('-' * 44)
         legenda_aeroportos()
-        return True
+        if voltar_menu():
+            return True
     else:
         mensagem = dados.get('mensagem')
         print(mensagem)
+        pausa()
         return None
 
 def validar_codigo_assento(codigo):
@@ -134,9 +188,7 @@ def listar_rota(sock):
 
     if tipo == 'LISTA_ROTA_RESP':
         rotas = dados.get('rotas', [])
-        if not rotas:
-            print(f"Nenhuma rota encontrada de '{origem}' para '{destino}'.\n")
-            return None
+    
         
         print(f"\nRotas de '{origem}' para '{destino}':\n")
         for idx, rota in enumerate(rotas, 1):
@@ -168,43 +220,6 @@ def listar_rota(sock):
         return None
 
 
-def menu():
-    menu = True
-
-    while menu:
-        print("===== MENU =====")
-        print("1- Comprar passagem")
-        print("2- Sair")
-
-        menuOption = input("Digite a opção do menu: ")
-    
-            
-        if menuOption == '1':
-            rotas = cliente.solicitar_rotas()
-            print("Rotas disponíveis:")
-            for rota in rotas:
-                status = "Disponível" if rota["disponivel"] else "Indisponível"
-                print(f'{rota["origem"]} -> {rota["destino"]}: {status} - Preço: {rota["preco"]}')
-
-            # Solicitar compra de passagem
-            origem = input("Escolha a origem: ")
-            destino = input("Escolha o destino: ")
-            assento = input("Escolha o assento: ")
-
-            resposta_final = cliente.comprar_passagem(origem, destino, assento)
-            print(resposta_final["mensagem"])
-            if resposta_final["status"] == "sucesso":
-                print(f"Preço: {resposta_final['preco']}")
-
-        elif menuOption == "2":
-            print("SAINDO")
-            cliente.fechar_conexao()
-            menu = False
-        else:
-            print("DIGITE UM VALOR VÁLIDO")
-        
-    print("FIM DO PROGRAMA")
-
 
 def buscar_rotas_cliente(sock):
     """
@@ -219,7 +234,6 @@ def buscar_rotas_cliente(sock):
     - None: Apenas exibe as rotas recebidas.
     """
     legenda_aeroportos()
-    print('=' * 22 + " Lista de Rotas" + '=' * 22 +"\n")
     invalido = True
     while invalido:
         print("\033[31m" +"Para Sair insira 'x'" +"\033[0m")
@@ -251,7 +265,10 @@ def buscar_rotas_cliente(sock):
         
         if not rotas:
             print(f"Nenhuma rota encontrada de {origem} para {destino}.")
+            pausa(2)
             return
+        
+        print('=' * 22 + " Lista de Rotas" + '=' * 22 +"\n")
 
         print(f"Rotas disponíveis de {origem} para {destino}:\n")
         
@@ -290,18 +307,22 @@ def buscar_rotas_cliente(sock):
                         print(f"    - {trecho['voo']}, Duração: {trecho['duracao']}")
                     print("")
                     return voos_selecionados
+                
                 elif escolha == len(rotas) + 1:
                     print("Cancelando a escolha de rota...")
+                    pausa(1)
                     break
                 else:
                     print(f"Por favor, insira um número entre 1 e {len(rotas) + 1}.")
+                    pausa(1)
             except ValueError:
                 print("Entrada inválida. Por favor, insira um número válido.")
+                pausa(1)
     else:
         print("Erro: Resposta inesperada do servidor.")
         return None
 
-def reservar_assentos_cliente(sock, voos_selecionados):
+def reservar_assentos_cliente(sock, voos_selecionados, user):
     """
     Função no lado do cliente para visualizar os assentos disponíveis para cada voo e permitir a reserva.
 
@@ -315,7 +336,7 @@ def reservar_assentos_cliente(sock, voos_selecionados):
     # Receber a resposta com os assentos disponíveis
     tipo, resposta = receber_mensagem(sock)
 
-    if tipo == "LISTA_ASS_RESP":
+    if tipo == "LISTA_ASS_RESP":  
         assentos_disponiveis = resposta.get("assentos", {})
         assentos_escolhidos = {}
 
@@ -335,20 +356,61 @@ def reservar_assentos_cliente(sock, voos_selecionados):
                         break
                     elif assento_escolhido.lower() == 'cancelar':
                         print("Cancelando a escolha de assentos...")
+                        pausa(2)
                         return
                     else:
-                        print("Assento inválido. Por favor, escolha novamente.")
+                        print("Assento inválido ou já reservado. Por favor, escolha novamente.")
+                        pausa(2)
 
         # Confirmar reserva dos assentos
-        enviar_mensagem(sock, "RESERVAR_ASSENTOS", {"voos": voos_selecionados, "assentos": assentos_escolhidos})
+        enviar_mensagem(sock, "RESERVAR_ASSENTOS", {"voos": voos_selecionados, "assentos": assentos_escolhidos, 'user_id': user})
 
         # Receber a confirmação da reserva
         tipo, resposta = receber_mensagem(sock)
 
         if tipo == "RESERVA_CONFIRMADA":
             print(resposta["mensagem"])
+            voltar_menu()
         elif tipo == "RESERVA_ERRO":
             print(resposta["mensagem"])
+            voltar_menu()
 
     else:
         print("Erro ao receber a lista de assentos disponíveis.")
+
+
+
+def exibir_pedidos(sock, user_id):
+    """
+    Recebe e exibe os pedidos do servidor em formato de lista descritiva.
+    
+    Parâmetros:
+    - sock (socket.socket): O socket TCP conectado ao servidor.
+    
+    Retorna:
+    - None
+    """
+    enviar_mensagem(sock, "PEDIDOS", {'id': user_id})
+    tipo, conteudo = receber_mensagem(sock)
+
+    if tipo == "EXIBIR_PEDIDOS":
+        if 'pedidos' in conteudo:
+            pedidos = conteudo['pedidos']
+            if pedidos:
+                # Exibir cada pedido
+                for idx, pedido in enumerate(pedidos, 1):
+                    print(f"Pedido {idx}:")
+                    for voo in pedido['voos']:
+                        print(f"  Origem: {voo['origem']}")
+                        print(f"  Destino: {voo['destino']}")
+                        print(f"  Voo: {voo['voo']}")
+                        print(f"  Assento: {voo['assento']}")
+                        print("-" * 30)
+            else:
+                print("Nenhum pedido encontrado.")
+        else:
+            print(conteudo['mensagem'])
+    else:
+        print("Tipo de mensagem inesperado:", tipo)
+
+    voltar_menu()
