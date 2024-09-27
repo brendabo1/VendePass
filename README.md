@@ -1,6 +1,6 @@
 <h1 align="center"><i>VendePass</i></h1>
 
-<p align="center"> Uma interface de socket para venda de passagens aéreas.</p>
+<p align="center"> Uma interface de socket TCP/IP para venda de passagens aéreas.</p>
 
 ## Introdução
 Desde o primeiro voo de Santos Dumont, a aviação evoluiu rapidamente, passando de uma curiosidade tecnológica a um dos principais meios de transporte no mundo. Inicialmente restrito a elites e serviços militares, o transporte aéreo começou a se popularizar após a Segunda Guerra Mundial, com a expansão de rotas comerciais. A democratização do acesso ao transporte aéreo tem-se acelerado nas últimas décadas, impulsionada pelo surgimento de companhias aéreas de baixo custo que revolucionaram o setor ao oferecer tarifas mais acessíveis e ampliar a conectividade global. Nesse contexto, a tecnologia de venda de passagens aéreas desempenha um papel central, permitindo que sistemas de reserva e processamento de bilhetes acompanhem a evolução e a complexidade desse setor.
