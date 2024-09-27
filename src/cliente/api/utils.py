@@ -10,7 +10,7 @@ def pausa(segundos=1):
 def login(socket):
     valido = False
     while not valido:
-        os.system('cls')
+        os.system('cls||clear')
         print('=' * 22 +  "LOGIN " + '=' * 22 +"\n\n" )
         print("\033[31m" +"Para Sair ID: 'x'" +"\033[0m")
      
@@ -85,7 +85,7 @@ def exibe_todas_rotas(socket):
     tipo, dados = receber_mensagem(socket)
     
     if tipo == 'TODAS_ROTAS_RESP':
-        os.system('cls')
+        os.system('cls||clear')
 
         if not dados:
             print(f"Nenhuma rota encontrada.\n")

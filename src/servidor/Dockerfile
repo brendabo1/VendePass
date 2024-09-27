@@ -8,4 +8,4 @@ COPY ./api /servidor-socket
 EXPOSE 12345
 
 # Comando para rodar o servidor
-CMD ["python", "app_servidor.py"]
+CMD ["python3", "app_servidor.py"]

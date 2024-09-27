@@ -9,4 +9,4 @@ EXPOSE 12346
 # RUN pip install -r requirements.txt
 
 # Comando para rodar o servidor
-CMD ["python", "app_cliente.py"]
+CMD ["python3", "app_cliente.py"]

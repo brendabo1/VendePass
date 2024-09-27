@@ -131,22 +131,36 @@ Para o desenvolvimento da solução, o paradigma de comunicação foi adotado de
 Esse paradigma simplifica o design de sistemas, especialmente em arquiteturas distribuídas e em larga escala, onde a manutenção do estado entre solicitações pode ser onerosa ou complexa (TANENBAUM; WETHERALL, 2011).
 
 ### Protocolo de Comunicação
-Dado o uso da rede internet na solução, o conjunto de protocolos Transmission Control Protocol/ Internet Protocol (TCP/IP) foi utilizado. Este conjunto de protocolos específicos, organizados nas camadas exibidas na Figura 3, descreve como os dados devem ser transmitidos de um dispositivo para outro por meio de uma rede. 
+Dado o uso da rede internet na solução, o conjunto de protocolos Transmission Control Protocol/ Internet Protocol (TCP/IP) foi utilizado. Para garantir a confiabilidade e integridade dos dados na comunicação entre cliente e servidor, o protocolo TCP foi adotado juntamente com o endereçamento IPv4 por meio de um STREAM SOCKET.
+
+Cada requisição possui um padrão enviado através de um JSON contendo o tipo do serviço solicitado e os parametros para atende-la. As respostas também são enviadas através do formato JSON contendo a mensagem de retorno. A Figura 1 explicita os tipos de requisições na troca de mensagens entre cliente e servidor. Também, a Figura 2 exemplifica a ordem e o fluxo das mensagens trocadas para a rotina de compra de passagens.
 
 <div align="center">
   <figure>  
-    <img src="images/tcp-ip.png" width="150px">
+    <img src="images/msg_title.jpg" width="500px">
     <figcaption>
       <p align="center"> 
 
-**Figura 1** - Exemplo de endereço IP e Porta para configuração do soquete
+**Figura 1** - Troca de mensagens e requisições entre cliente e servidor
     </figcaption>
   </figure>
 </div>
 
-A arquitetura TCP/IP (Transmission Control Protocol/Internet Protocol) reune os protocolos IP da camada de rede, TCP e UDP da camada de transporte e é o modelo básico de comunicação em redes, especialmente na internet. Sua divisão em camadas, com protocolos distintos para cada função, garante flexibilidade, escalabilidade e confiabilidade, permitindo que diferentes redes e dispositivos interajam de maneira eficiente e robusta.
+<div align="center">
+  <figure>  
+    <img src="images/fluxo.jpg" width="500px">
+    <figcaption>
+      <p align="center"> 
 
-Para garantir a confiabilidade e integridade dos dados na comunicação entre cliente e servidor, o protocolo TCP foi adotado juntamente com o endereçamento IPv4 por meio de um STREAM SOCKET.
+**Figura 2** - Fluxo de mensagens e requisições para compra de passagens
+    </figcaption>
+  </figure>
+</div>
+
+<!-- Este conjunto de protocolos específicos, organizados nas camadas exibidas na Figura 3, descreve como os dados devem ser transmitidos de um dispositivo para outro por meio de uma rede. 
+
+A arquitetura TCP/IP (Transmission Control Protocol/Internet Protocol) reune os protocolos IP da camada de rede, TCP e UDP da camada de transporte e é o modelo básico de comunicação em redes, especialmente na internet. Sua divisão em camadas, com protocolos distintos para cada função, garante flexibilidade, escalabilidade e confiabilidade, permitindo que diferentes redes e dispositivos interajam de maneira eficiente e robusta. -->
+
 
 ### Formatação e tratamento de Dados
 
@@ -169,13 +183,13 @@ Os pontos onde os mutexes foram inseridos correspondem ao processo de autentica�
 
 ### Confiabilidade do Sistema
 
-Para garantir a confiabilidade do sistema, o tratamento de exceções foi implementado nos pontos de conexão com o servidor e no envio e recebimento de mensagens. Assim, 
+Para garantir a confiabilidade do sistema, o tratamento de exceções foi implementado nos pontos de conexão com o servidor e no envio e recebimento de mensagens. Assim, por ser orientado à conexão, o servidor não sofre prejuízos em qualquer possível ponto de desconexão. Os dados não são mantidos e os recursos são devolvidos sem prejuízos ao sistema.
 
 ### Docker
-O uso da plataforma Docker otimiza a execução do sistema ao dispensar a configuração de cada máquina física. Através de dois containers, sendo um para o servidor e um para o cliente, a aplicação pode ser executa em diferentes máquinas com a plataforma Docker.
+O uso da plataforma Docker otimiza a execução do sistema ao dispensar a configuração de cada máquina física. Através de dois containers, sendo um para o servidor e um para o cliente, a aplicação pode ser executa em diferentes máquinas com a plataforma Docker. Existe um Dockerfile para a execução do servidor, bem como um Dockerfile para o cliente.
 
 ### Desempenho e Avaliação
-Para avaliação e comparação do desempenho do sistema, scripts para a simulação de 5, 10 e 20 usuários conectados simultaneamente foram executados. Comparando-se a performance da execução sequencial e multithread, em todos os cenários avaliados a execução multithread atendeu aos clientes em menor tempo.
+Para avaliação e comparação do desempenho do sistema, scripts para a simulação de 5, 10 e 20 usuários conectados simultaneamente foram executados. Comparando-se a performance da execução sequencial ou singlethread e multithread, em todos os cenários avaliados a execução multithread atendeu aos clientes em menor tempo.
 ## Conclusão
 A solução abordada desenvolveu um sistema de venda de passagens aéreas utilizando a arquitetura cliente-servidor e a interface de sockets nativa do TCP/IP atendendo aos requisitos definidos. O sistema provê serviços de busca, compra de passagens e reserva de assetos ultilizando estratégias multrithread para conexões simulâneas e mutexes para controle de concorrência. Dessa forma, o projeto apresentou desempenho satisfatório podendo, futuramente, incluir interface gráfica, criptografia dos dados de usuários e integração com banco de dados.
 

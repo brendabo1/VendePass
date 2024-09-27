@@ -15,7 +15,7 @@ class Cliente:
         try:
             autenticado = login(self.__client_socket)
             while autenticado:
-                os.system('cls')
+                os.system('cls||clear')
                 
                 print("--------------------- MENU ---------------------\n\n")
                 print("1- Listar Todas as Rotas")
@@ -28,17 +28,17 @@ class Cliente:
                     all_rotas = exibe_todas_rotas(self.__client_socket)
 
                 elif menuOption == "2":
-                    os.system('cls')
+                    os.system('cls||clear')
                     voos_selecionados =  buscar_rotas_cliente(self.__client_socket) 
                     if voos_selecionados:
                         reservar_assentos_cliente(self.__client_socket, voos_selecionados, autenticado)
                         
                 elif menuOption == "3": 
-                    os.system('cls')
+                    os.system('cls||clear')
                     exibir_pedidos(self.__client_socket, autenticado)
 
                 elif menuOption == "4":
-                    os.system('cls')
+                    os.system('cls||clear')
                     print("Saindo...")
                     enviar_mensagem(self.__client_socket, 'LOGOUT', None)
                     autenticado = False
