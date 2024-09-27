@@ -133,7 +133,7 @@ Esse paradigma simplifica o design de sistemas, especialmente em arquiteturas di
 ### Protocolo de Comunicação
 Dado o uso da rede internet na solução, o conjunto de protocolos Transmission Control Protocol/ Internet Protocol (TCP/IP) foi utilizado. Para garantir a confiabilidade e integridade dos dados na comunicação entre cliente e servidor, o protocolo TCP foi adotado juntamente com o endereçamento IPv4 por meio de um STREAM SOCKET.
 
-Cada requisição possui um padrão enviado através de um JSON contendo o tipo do serviço solicitado e os parametros para atende-la. As respostas também são enviadas através do formato JSON contendo a mensagem de retorno. A Figura 1 explicita os tipos de requisições na troca de mensagens entre cliente e servidor. Também, a Figura 2 exemplifica a ordem e o fluxo das mensagens trocadas para a rotina de compra de passagens.
+Cada requisição possui um padrão enviado através de um JSON contendo o tipo do serviço solicitado e os parametros para atende-la. Em seguida, uma resposta é enviada também através do formato JSON contendo a mensagem de retorno. A Figura 1 explicita os tipos de requisições na troca de mensagens entre cliente e servidor. Também, a Figura 2 exemplifica a ordem e o fluxo das mensagens trocadas para a rotina de compra de passagens.
 
 <div align="center">
   <figure>  
@@ -167,8 +167,18 @@ A arquitetura TCP/IP (Transmission Control Protocol/Internet Protocol) reune os 
 Para o trágefo de dados entre cliente e servidor, o Javascript Object Notation (JSON) foi utilizado. Este padrão amplamente adotado em aplicações na transmissão e armazenamento de dados é baseado em texto e tem como vantagem sua estrutura leve, simplicidade e versatilidade, compativel com diversas plataformas e linguagens de programação. 
 
 Diante da organização dos dados no formato JSON em uma estrutura de chave-valor, as requisições e respostas tem um padrão: 
-- `tipo`: string que identifica o tipo da mensagem, seja ela uma requisição ou resposta, ex: 'LOGIN', 'LOGIN_RESPOSTA'.
+- `tipo`: string que identifica o tipo da mensagem, seja ela uma requisição ou resposta, ex: 'LOGIN'.
 - `dado`: dicionário de dados associado a mensagem.
+
+| Tipo de requisição   |  Dado  |  Descrição |
+---------------------- |-----------|---------|
+|  "LOGIN"    |  {'id': user_id, 'senha': senha}| Requisição para autenticação do usuário a partir do id e senha |
+|  "LISTAR_TODAS_ROTAS"    |  None       | Solicita todas as rotas e voos cadastrados no sistema |
+|  "LISTA_ROTA"    |  {'origem': origem, 'destino': destino}       | Solicita as rotas e voos possíveis e disponíveis para uma dada origem e destino.
+|  "LISTA_ASS"    |  {"voos": voos_selecionados}       | Solicita os assentos disponíveis nos voos selecionados pelo usuário
+|  "RESERVAR_ASSENTOS" | {"voos": voos_selecionados, "assentos": assentos_escolhidos, 'user_id': user} | Reserva os assentos escolhidos pelo usuário nos correspondentes voos.
+|  "PEDIDOS" | {'id': user_id} | Solicita os pedidos realizados pelo usuário de id correspondente
+|  "LOGOUT"  | None | O programa do usuário é encerrado e o cliente desconectado
 
 ## Resultados e Discussões
 ### Tratamento de Conexões Simultâneas
