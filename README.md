@@ -137,7 +137,7 @@ Cada requisição possui um padrão enviado através de um JSON contendo o tipo 
 
 <div align="center">
   <figure>  
-    <img src="images/msg_title.jpg" width="500px">
+    <img src="images/msg_title.jpg" width="600px">
     <figcaption>
       <p align="center"> 
 
@@ -148,7 +148,7 @@ Cada requisição possui um padrão enviado através de um JSON contendo o tipo 
 
 <div align="center">
   <figure>  
-    <img src="images/fluxo.jpg" width="500px">
+    <img src="images/fluxo.jpg" width="600px">
     <figcaption>
       <p align="center"> 
 
