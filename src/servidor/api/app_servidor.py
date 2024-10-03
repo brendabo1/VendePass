@@ -120,6 +120,6 @@ class Servidor():
 if __name__ == "__main__":
     # host = '127.0.0.1'  # Localhost
     host = socket.gethostbyname(socket.gethostname())
-    port = 12345        # Porta de conexão
+    port = 12101        # Porta de conexão
     servidor = Servidor(host, port)
     servidor.start()

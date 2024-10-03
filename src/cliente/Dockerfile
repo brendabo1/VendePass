@@ -4,7 +4,7 @@ WORKDIR /cliente-socket
 
 COPY ./api /cliente-socket
 
-EXPOSE 12346  
+EXPOSE 12101  
 
 # RUN pip install -r requirements.txt
 

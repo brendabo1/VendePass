@@ -4,7 +4,7 @@ from utils import login, exibe_todas_rotas, buscar_rotas_cliente, reservar_assen
 from msg_utils import enviar_mensagem
 
 class Cliente:
-    def __init__(self, host='', port=12345):
+    def __init__(self, host='', port=12101):
         self.__server_ip = host
         self.__port = port
         self.__client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
